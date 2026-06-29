@@ -1,16 +1,33 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { CartItem } from "@/types"
 
 export default function Navbar() {
     const [cartCount, setCartCount] = useState(0)
+
+useEffect(() => {
+    const updateCount = () => {
+        const stored = localStorage.getItem("cart")
+        if (stored) {
+            const items: CartItem[] = JSON.parse(stored)
+            const total = items.reduce((sum, item) => sum + item.quantity, 0)
+            setCartCount(total)
+        }
+    }
+
+    updateCount()
+
+    window.addEventListener("storage", updateCount)
+    return () => window.removeEventListener("storage", updateCount)
+},[])
 
     return (
         <nav className="bg-gray-900 text-white px-8 py-4">
             <div className="flex items-center justify-between max-w-6xl mx-auto">
                 <Link href="/" className="text-green-400 font-bold text-xl">
-                MEGASSOUK
+                MultiMart
                 </Link>
 
                 <input

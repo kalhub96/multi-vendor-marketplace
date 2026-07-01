@@ -51,7 +51,7 @@ export default function CartPage() {
 
   // CALCULATE TOTAL
   const total = cartItems.reduce(
-    (sum, item) => sum + item.product.price * 120 * item.quantity,
+    (sum, item) => sum + item.product.price * 160 * item.quantity,
     0
   )
 
@@ -98,7 +98,7 @@ export default function CartPage() {
                     <span className="text-gray-600 text-xs">No Image</span>
                   </div>
 
-                  {/* PRODUCT INFO */}
+                  /* PRODUCT INFO */
                   <div className="flex-1">
                     <span className="text-green-400 text-xs uppercase tracking-wide">
                       {item.product.category}
@@ -107,7 +107,7 @@ export default function CartPage() {
                       {item.product.name}
                     </h3>
                     <p className="text-green-400 font-bold mt-1">
-                      ETB {(item.product.price * 120).toFixed(2)}
+                      ETB {(item.product.price * 160).toFixed(2)}
                     </p>
                   </div>
 
@@ -134,7 +134,7 @@ export default function CartPage() {
                     </button>
                   </div>
 
-                  {/* ITEM TOTAL + REMOVE */}
+                  /* ITEM TOTAL + REMOVE */
                   <div className="text-right w-32">
                     <p className="text-white font-bold">
                       ETB{" "}
@@ -183,7 +183,6 @@ export default function CartPage() {
           </div>
         )}
       </section>
-
     </main>
   )
 }

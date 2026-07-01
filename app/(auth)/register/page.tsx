@@ -82,14 +82,16 @@ export default function RegisterPage() {
                         </label>
                         <div className="grid grid-cols-2 gap-3">
                             <button
+                            type="button"
                             onClick={() => setRole("buyer")}
                             className={`py-3 rounded-lg font-medium text-sm transition-colors ${ role === "buyer" ? "bg-green-400 text-gray-900" : "bg-gray-800 text-gray-300 hover:bg-gray-700"}`}
                             >
                                 🛍️ Shop / Buy
                             </button>
                             <button
+                            type="button"
                             onClick={() => setRole("vendor")}
-                            className={'py-3 rounded-lg font-medium text-sm transition-colors ${role === "vendor" ? "bg-green-400 text-gray-900" : "bg-gray-800 text-gray-300 hove:bg-gray-700"}'}
+                            className={`py-3 rounded-lg font-medium text-sm transition-colors ${role === "vendor" ? "bg-green-400 text-gray-900" : "bg-gray-800 text-gray-300 hove:bg-gray-700"}`}
                             >
                                 🏪 Sell / Vendor
                             </button>
@@ -137,6 +139,7 @@ export default function RegisterPage() {
                     )}
 
                     <button
+                    type="button"
                     onClick={handleRegister}
                     disabled={loading}
                     className="w-full bg-green-400 text-gray-900 font-bold py-3 rounded-lg hover:bg-green-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"

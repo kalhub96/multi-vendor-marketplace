@@ -5,9 +5,11 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { User, Product, ProductCategory } from "@/types"
 import { products as mockProducts } from "@/data/products"
+import { useAuth } from "@/lib/auth-context"
 
 export default function VendorProductsPage() {
   const router = useRouter()
+  const { loaded } = useAuth()
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [checking, setChecking] = useState(true)
   const [products, setProducts] = useState<Product[]>([])
@@ -23,22 +25,18 @@ export default function VendorProductsPage() {
 
   // AUTH CHECK
   useEffect(() => {
-    const stored = localStorage.getItem("currentUser")
-    if (!stored) {
+    if (!loaded) return
+    if (!currentUser) {
       router.push("/login")
       return
     }
-    const user: User = JSON.parse(stored)
-    if (user.role !== "vendor") {
+    if (currentUser.role !== "vendor"){
       router.push("/")
-      return
     }
-    setCurrentUser(user)
     setProducts(mockProducts.filter((p) => p.vendorId === "vendor_1"))
-    setChecking(false)
-  }, [router])
+  }, [currentUser, loaded, router])
 
-  if (checking) {
+  if (!loaded || !currentUser) {
     return (
       <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
         <p className="text-gray-400">Loading...</p>

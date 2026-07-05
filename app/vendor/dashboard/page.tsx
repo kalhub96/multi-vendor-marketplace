@@ -7,35 +7,27 @@ import { User } from "@/types"
 import { products } from "@/data/products"
 import { vendors } from "@/data/users"
 import { orders } from "@/data/orders"
+import { useAuth } from "@/lib/auth-context"
 
 export default function VendorDashboredPage() {
     const router = useRouter()
-    const [currentUser, setCurrentUser] =useState<User | null>(null)
-    const [checking, setChecking] = useState(true)
+    const { currentUser, loaded } = useAuth()
 
     useEffect(() => {
-        const stored = localStorage.getItem("currentUser")
-
-        if (!stored) {
+        if (!loaded) return
+        if (!currentUser) {
             router.push("/login")
             return
         }
-
-        const user: User = JSON.parse(stored)
-
-        if (user.role !== "vendor"){
+        if (currentUser.role !== "vendor"){
             router.push("/")
-            return
         }
+    }, [currentUser, loaded, router])
 
-        setCurrentUser(user)
-        setChecking(false)
-    }, [router])
-
-    if (checking) {
-        return (
+    if (!loaded || !currentUser) {
+        return(
             <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
-                <p className="text-gray-400">Loading dashbored...</p>
+                <p className="text-gray-400">Loading dashboard...</p>
             </main>
         )
     }

@@ -3,8 +3,10 @@
 import { useState } from "react"
 import Link from "next/link"
 import { UserRole } from "@/types"
+import { useAuth } from "@/lib/auth-context"
 
 export default function RegisterPage() {
+    const { login } = useAuth()
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -41,7 +43,7 @@ export default function RegisterPage() {
                 createdAt: new Date().toISOString(),
             }
 
-            localStorage.setItem("currentUser", JSON.stringify(newUser))
+            login(newUser)
 
             if (role === "vendor"){
                 window.location.href = "/vendor/dashbored"
@@ -86,14 +88,14 @@ export default function RegisterPage() {
                             onClick={() => setRole("buyer")}
                             className={`py-3 rounded-lg font-medium text-sm transition-colors ${ role === "buyer" ? "bg-green-400 text-gray-900" : "bg-gray-800 text-gray-300 hover:bg-gray-700"}`}
                             >
-                                🛍️ Shop / Buy
+                                Shop / Buy
                             </button>
                             <button
                             type="button"
                             onClick={() => setRole("vendor")}
                             className={`py-3 rounded-lg font-medium text-sm transition-colors ${role === "vendor" ? "bg-green-400 text-gray-900" : "bg-gray-800 text-gray-300 hove:bg-gray-700"}`}
                             >
-                                🏪 Sell / Vendor
+                                Sell / Vendor
                             </button>
                         </div>
                     </div>

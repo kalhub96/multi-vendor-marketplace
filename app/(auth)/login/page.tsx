@@ -4,9 +4,11 @@ import { use , useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { users } from "@/data/users"
+import { useAuth } from "@/lib/auth-context"
 
 export default function LoginPage() {
     const router = useRouter()
+    const { login } = useAuth()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
@@ -35,7 +37,7 @@ export default function LoginPage() {
             return
         }
 
-        localStorage.setItem("currentUser", JSON.stringify(user))
+        login(user)
 
         if (user.role === "admin"){
             router.push("/admin/dashboard")

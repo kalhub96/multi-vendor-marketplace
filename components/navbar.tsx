@@ -1,5 +1,6 @@
 import Link from "next/link"
 import CartBadge from "@/components/cart-badge"
+import AuthButton from "@/components/auth-button"
 
 export default function Navbar() {
   return (
@@ -17,27 +18,15 @@ export default function Navbar() {
         />
 
         <div className="flex items-center gap-6">
-          <Link href="/products" className="hover:text-green-400 transition-colors">
+          <Link 
+          href="/products" 
+          className="hover:text-green-400 transition-colors">
             Marketplace
           </Link>
-          <Link href="/vendor/dashboard" className="hover:text-green-400 transition-colors">
-            Vendor
-          </Link>
-          <Link href="/admin/dashboard" className="hover:text-green-400 transition-colors">
-            Dashboard
-          </Link>
-
+          
           <CartBadge />
 
-          <Link href="/login" className="hover:text-green-400 transition-colors">
-            Log In
-          </Link>
-          <Link
-            href="/register"
-            className="bg-green-400 text-gray-900 font-semibold px-4 py-2 rounded-full hover:bg-green-300 transition-colors"
-          >
-            Become a Seller
-          </Link>
+          <AuthButton />
         </div>
       </div>
     </nav>

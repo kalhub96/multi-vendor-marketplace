@@ -7,9 +7,12 @@ import { User } from "@/types"
 import { products } from "@/data/products"
 import { users, vendors } from "@/data/users"
 import { orders } from "@/data/orders"
+import { useAuth } from "@/lib/auth-context"
+
 
 export default function AdminDashboardPage() {
   const router = useRouter()
+  const { loaded } = useAuth()
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [checking, setChecking] = useState(true)
   const [activeTab, setActiveTab] = useState<"overview" | "vendors" | "products">("overview")
@@ -17,21 +20,17 @@ export default function AdminDashboardPage() {
 
   // AUTH CHECK — ADMIN ONLY
   useEffect(() => {
-    const stored = localStorage.getItem("currentUser")
-    if (!stored) {
+    if (!loaded) return
+    if (!currentUser) {
       router.push("/login")
       return
     }
-    const user: User = JSON.parse(stored)
-    if (user.role !== "admin") {
+    if (currentUser.role !== "admin"){
       router.push("/")
-      return
     }
-    setCurrentUser(user)
-    setChecking(false)
-  }, [router])
+  }, [currentUser, loaded, router])
 
-  if (checking) {
+  if (!loaded || !currentUser) {
     return (
       <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
         <p className="text-gray-400">Loading admin panel...</p>

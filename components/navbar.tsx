@@ -3,8 +3,10 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { CartItem } from "@/types"
+import { useCart } from "@/lib/cart-context"
 
 export default function Navbar() {
+    const { cartItems } = useCart() 
     const [cartCount, setCartCount] = useState(0)
 
 useEffect(() => {

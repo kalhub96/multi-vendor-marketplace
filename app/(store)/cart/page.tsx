@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { CartItem } from "@/types"
+import { useCart } from "@/lib/cart-context"
 
 // SAFELY READ FROM LOCALSTORAGE
 function getCartFromStorage(): CartItem[] {
@@ -16,7 +17,9 @@ function getCartFromStorage(): CartItem[] {
 }
 
 export default function CartPage() {
+  const { removeFromCart, updateQuantity, cartTotal } = useCart()
   const [cartItems, setCartItems] = useState<CartItem[]>([])
+
 
   // LOAD CART ONCE ON MOUNT
   useEffect(() => {

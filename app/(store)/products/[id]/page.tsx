@@ -6,6 +6,7 @@ import { use } from "react"
 import { products } from "@/data/products"
 import { vendors } from "@/data/users"
 import { CartItem } from "@/types"
+import { useCart } from "@/lib/cart-context"
 
 export default function ProductDetailPage({
     params,
@@ -15,6 +16,8 @@ export default function ProductDetailPage({
     const { id } = use(params)
     const [quantity, setQuantity] = useState(1)
     const [added, setAdded] = useState(false)
+
+    const { addToCart } = useCart() 
 
     //find the product id
     const product = products.find((p) => p.id === id)
@@ -65,6 +68,7 @@ export default function ProductDetailPage({
         }
 
         // show added comfermation
+        addToCart(product, quantity)
         setAdded(true)
         setTimeout(() => setAdded(false), 2000)
     }

@@ -4,7 +4,7 @@ import { products } from "@/data/products"
 export default function Home() {
   return (
     <main>
-      <section className="bg-blue-600 text-white py-20 px-8 text-center">
+      <section className="bg-emerald-500 text-white py-20 px-8 text-center">
         <h1 className="text-4xl font-bold mb-4">
           Welcome to MultiMart
         </h1>
@@ -13,7 +13,7 @@ export default function Home() {
         </p>
         <Link
           href="/products"
-          className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-full hover:bg-blue-50">
+          className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-full hover:bg-emerald-300">
             Shop Now
           </Link>
       </section>

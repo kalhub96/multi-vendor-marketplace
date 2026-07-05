@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { User } from "@/types"
 import { products } from "@/data/products"
 import { vendors } from "@/data/users"
+import { orders } from "@/data/orders"
 
 export default function VendorDashboredPage() {
     const router = useRouter()
@@ -80,7 +81,7 @@ export default function VendorDashboredPage() {
                 </div>
                 <div className="bg-gray-900 rounded-xl p-6">
                     <p className="text-gray-400 text-sm mb-2">Total Orders</p>
-                    <p className="text-3xl font-bold text-green-400">12</p>
+                    <p className="text-3xl font-bold text-green-400">{orders.length}</p>
                 </div>
                 <div className="bg-gray-900 rounded-xl p-6">
                     <p className="text-gray-400 text-sm mb-2">Total Revenue</p>

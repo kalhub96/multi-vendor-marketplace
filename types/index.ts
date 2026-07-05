@@ -58,3 +58,14 @@ export type Order = {
   status: OrderStatus
   createdAt: string
 }
+
+export type Rating = {
+  id: string
+  productId: string
+  vendorId: string
+  buyerId: string
+  buyerName: string
+  stars: number
+  comment: string
+  createdAt: string
+}

@@ -1,62 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import Link from "next/link"
-import { CartItem } from "@/types"
 import { useCart } from "@/lib/cart-context"
 
-// SAFELY READ FROM LOCALSTORAGE
-function getCartFromStorage(): CartItem[] {
-  if (typeof window === "undefined") return []
-  try {
-    const stored = localStorage.getItem("cart")
-    return stored ? JSON.parse(stored) : []
-  } catch {
-    return []
-  }
-}
-
 export default function CartPage() {
-  const { removeFromCart, updateQuantity, cartTotal } = useCart()
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const { cartItems, removeFromCart, updateQuantity, cartTotal, loaded } = useCart()
 
-
-  // LOAD CART ONCE ON MOUNT
-  useEffect(() => {
-    setCartItems(getCartFromStorage())
-  }, [])
-
-  // SAVE CART WHENEVER IT CHANGES
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("cart", JSON.stringify(cartItems))
-    }
-  }, [cartItems])
-
-  // REMOVE ITEM
-  const handleRemove = (productId: string) => {
-    setCartItems((prev) =>
-      prev.filter((item) => item.product.id !== productId)
+  if (!loaded) {
+    return (
+      <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
+        <p className="text-gray-400">Loading cart...</p>
+      </main>
     )
   }
-
-  // UPDATE QUANTITY
-  const handleQuantityChange = (productId: string, newQuantity: number) => {
-    if (newQuantity < 1) return
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.product.id === productId
-          ? { ...item, quantity: newQuantity }
-          : item
-      )
-    )
-  }
-
-  // CALCULATE TOTAL
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.product.price * 160 * item.quantity,
-    0
-  )
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
@@ -72,7 +28,6 @@ export default function CartPage() {
 
       <section className="max-w-4xl mx-auto px-8 py-12">
 
-        {/* EMPTY CART */}
         {cartItems.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-6xl mb-6">🛒</p>
@@ -89,19 +44,16 @@ export default function CartPage() {
         ) : (
           <div className="flex flex-col gap-8">
 
-            {/* CART ITEMS */}
             <div className="flex flex-col gap-4">
               {cartItems.map((item) => (
                 <div
                   key={item.product.id}
                   className="bg-gray-900 rounded-xl p-6 flex items-center gap-6"
                 >
-                 {/* IMAGE PLACEHOLDER */}
                   <div className="bg-gray-800 w-24 h-24 rounded-lg flex items-center justify-center shrink-0">
                     <span className="text-gray-600 text-xs">No Image</span>
                   </div>
 
-                  /* PRODUCT INFO */
                   <div className="flex-1">
                     <span className="text-green-400 text-xs uppercase tracking-wide">
                       {item.product.category}
@@ -114,12 +66,10 @@ export default function CartPage() {
                     </p>
                   </div>
 
-                  {/* QUANTITY CONTROLS */}
                   <div className="flex items-center gap-3 bg-gray-800 rounded-full px-4 py-2">
                     <button
-                      onClick={() =>
-                        handleQuantityChange(item.product.id, item.quantity - 1)
-                      }
+                      type="button"
+                      onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                       className="text-gray-400 hover:text-white font-bold text-lg"
                     >
                       −
@@ -128,23 +78,21 @@ export default function CartPage() {
                       {item.quantity}
                     </span>
                     <button
-                      onClick={() =>
-                        handleQuantityChange(item.product.id, item.quantity + 1)
-                      }
+                      type="button"
+                      onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                       className="text-gray-400 hover:text-white font-bold text-lg"
                     >
                       +
                     </button>
                   </div>
 
-                  /* ITEM TOTAL + REMOVE */
                   <div className="text-right w-32">
                     <p className="text-white font-bold">
-                      ETB{" "}
-                      {(item.product.price * 120 * item.quantity).toFixed(2)}
+                      ETB {(item.product.price * 160 * item.quantity).toFixed(2)}
                     </p>
                     <button
-                      onClick={() => handleRemove(item.product.id)}
+                      type="button"
+                      onClick={() => removeFromCart(item.product.id)}
                       className="text-red-400 text-sm hover:text-red-300 mt-2 transition-colors"
                     >
                       Remove
@@ -154,12 +102,11 @@ export default function CartPage() {
               ))}
             </div>
 
-            {/* ORDER SUMMARY */}
             <div className="bg-gray-900 rounded-xl p-6">
               <h2 className="text-xl font-bold mb-4">Order Summary</h2>
               <div className="flex justify-between text-gray-400 mb-2">
                 <span>Subtotal</span>
-                <span>ETB {total.toFixed(2)}</span>
+                <span>ETB {cartTotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-gray-400 mb-2">
                 <span>Shipping</span>
@@ -168,11 +115,12 @@ export default function CartPage() {
               <div className="border-t border-gray-800 my-4" />
               <div className="flex justify-between text-white font-bold text-xl mb-6">
                 <span>Total</span>
-                <span className="text-green-400">
-                  ETB {total.toFixed(2)}
-                </span>
+                <span className="text-green-400">ETB {cartTotal.toFixed(2)}</span>
               </div>
-              <button className="w-full bg-green-400 text-gray-900 font-bold py-4 rounded-full hover:bg-green-300 transition-colors text-lg">
+              <button
+                type="button"
+                className="w-full bg-green-400 text-gray-900 font-bold py-4 rounded-full hover:bg-green-300 transition-colors text-lg"
+              >
                 Proceed to Checkout
               </button>
               <Link

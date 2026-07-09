@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { products } from "@/data/products"
 import { ProductCategory } from "@/types"
+import { useProducts } from "@/lib/products-context"
 
 const categories: { label: string; value: ProductCategory | "all" }[] = [
   { label: "All", value: "all" },
@@ -19,6 +19,7 @@ const categories: { label: string; value: ProductCategory | "all" }[] = [
 export default function ProductsPage() {
   const searchParams = useSearchParams()
   const searchQuery = searchParams.get("search") || ""
+  const { products } = useProducts()
 
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory | "all">("all")
 
@@ -110,8 +111,16 @@ export default function ProductsPage() {
                 href={`/products/${product.id}`}
                 className="bg-gray-900 rounded-xl overflow-hidden hover:ring-2 hover:ring-green-400 transition-all"
               >
-                <div className="bg-gray-800 h-48 flex items-center justify-center">
+                <div className="bg-gray-800 h-48 flex items-center justify-center overflow-hidden">
+                  {product.image && product.image.startsWith("data:") ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover"/>
+                  ) : (
                   <span className="text-gray-600 text-sm">No Image Yet</span>
+                  )}
                 </div>
 
                 <div className="p-4">

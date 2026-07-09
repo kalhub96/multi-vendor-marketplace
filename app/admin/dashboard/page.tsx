@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { products } from "@/data/products"
 import { users, vendors } from "@/data/users"
 import { orders } from "@/data/orders"
+import { useProducts } from "@/lib/products-context"
 import { useAuth } from "@/lib/auth-context"
 
 export default function AdminDashboardPage() {
   const router = useRouter()
   const { currentUser, loaded } = useAuth()
+  const { products: allProducts, deleteProduct } = useProducts()
   const [activeTab, setActiveTab] = useState<"overview" | "vendors" | "products">("overview")
-  const [allProducts, setAllProducts] = useState(products)
 
   // AUTH CHECK — ADMIN ONLY
   useEffect(() => {
@@ -34,8 +34,8 @@ export default function AdminDashboardPage() {
   }
 
   const handleDeleteProduct = (productId: string) => {
-    setAllProducts((prev) => prev.filter((p) => p.id !== productId))
-  }
+  deleteProduct(productId)
+}
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">

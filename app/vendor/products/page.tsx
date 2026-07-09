@@ -4,13 +4,13 @@ import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Product, ProductCategory } from "@/types"
-import { products as mockProducts } from "@/data/products"
 import { useAuth } from "@/lib/auth-context"
+import { useProducts } from "@/lib/products-context"
 
 export default function VendorProductsPage() {
   const router = useRouter()
   const { currentUser, loaded } = useAuth()
-  const [products, setProducts] = useState<Product[]>([])
+  const { products: allProducts, addProduct, deleteProduct } = useProducts()
   const [showForm, setShowForm] = useState(false)
 
   // FORM STATE
@@ -25,17 +25,18 @@ export default function VendorProductsPage() {
 
   // AUTH CHECK
   useEffect(() => {
-    if (!loaded) return
-    if (!currentUser) {
-      router.push("/login")
-      return
-    }
-    if (currentUser.role !== "vendor") {
-      router.push("/")
-      return
-    }
-    setProducts(mockProducts.filter((p) => p.vendorId === "vendor_1"))
-  }, [currentUser, loaded, router])
+  if (!loaded) return
+  if (!currentUser) {
+    router.push("/login")
+    return
+  }
+  if (currentUser.role !== "vendor") {
+    router.push("/")
+  }
+}, [currentUser, loaded, router])
+
+// FILTER TO ONLY THIS VENDOR'S PRODUCTS
+const products = allProducts.filter((p) => p.vendorId === "vendor_1")
 
   if (!loaded || !currentUser) {
     return (
@@ -110,7 +111,7 @@ export default function VendorProductsPage() {
       createdAt: new Date().toISOString(),
     }
 
-    setProducts((prev) => [newProduct, ...prev])
+    addProduct(newProduct)
 
     // RESET FORM
     setName("")
@@ -125,8 +126,8 @@ export default function VendorProductsPage() {
 
   // DELETE PRODUCT HANDLER
   const handleDelete = (productId: string) => {
-    setProducts((prev) => prev.filter((p) => p.id !== productId))
-  }
+  deleteProduct(productId)
+}
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">

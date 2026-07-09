@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { use } from "react"
-import { products } from "@/data/products"
 import { vendors } from "@/data/users"
+import { useProducts } from "@/lib/products-context"
 import { orders } from "@/data/orders"
 import { useCart } from "@/lib/cart-context"
 import { useRatings } from "@/lib/ratings-context"
@@ -28,6 +28,8 @@ export default function ProductDetailPage({
   const [ratingSubmitted, setRatingSubmitted] = useState(false)
 
   const { addToCart } = useCart()
+  const { products } = useProducts()
+  
   const {
     getProductRatings,
     getProductAverage,
@@ -125,11 +127,18 @@ export default function ProductDetailPage({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
 
           
-          <div className="bg-gray-800 rounded-2xl h-96 flex items-center justify-center">
-            <span className="text-gray-600">No Image Yet</span>
+          <div className="bg-gray-800 rounded-2xl h-96 flex items-center justify-center overflow-hidden">
+            {product.image && product.image.startsWith("data:") ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-full object-cover"/>
+            ) : (
+               <span className="text-gray-600">No Image Yet</span>
+               )}
           </div>
 
-          
           <div className="flex flex-col justify-center">
             <span className="text-green-400 text-sm uppercase tracking-wide mb-2">
               {product.category}

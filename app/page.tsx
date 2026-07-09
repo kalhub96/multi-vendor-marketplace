@@ -1,7 +1,11 @@
+"use client"
+
 import Link from "next/link"
-import { products } from "@/data/products"
+import { useProducts } from "@/lib/products-context"
 
 export default function Home() {
+  const { products } = useProducts()
+
   return (
     <main>
       <section className="bg-emerald-500 text-white py-20 px-8 text-center">
@@ -29,8 +33,16 @@ export default function Home() {
               href={`/products/${product.id}`}
               className="border rounded-lg p-4 hover:shadow-lg transition-shadow"
             >
-              <div className="bg-gray-100 h-48 rounded-md mb-4 flex items-center justify-center">
+              <div className="bg-gray-100 h-48 rounded-md mb-4 flex items-center justify-center overflow-hidden">
+                {product.image && product.image.startsWith("data:") ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"/>
+                ) : (
                 <span className="text-gray-400">No Image Yet</span>
+                )}
               </div>
               <h3 className="font-semibold text-lg">{product.name}</h3>
               <p className="text-gray-500 text-sm mb-2">{product.description}</p>

@@ -4,14 +4,15 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { User } from "@/types"
-import { products } from "@/data/products"
 import { vendors } from "@/data/users"
 import { orders } from "@/data/orders"
+import { useProducts } from "@/lib/products-context"
 import { useAuth } from "@/lib/auth-context"
 
 export default function VendorDashboredPage() {
     const router = useRouter()
     const { currentUser, loaded } = useAuth()
+    const { products } = useProducts()
 
     useEffect(() => {
         console.log("VENDOR DASHBOARD CHECK:", { loaded, currentUser })

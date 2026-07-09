@@ -14,12 +14,15 @@ export default function VendorDashboredPage() {
     const { currentUser, loaded } = useAuth()
 
     useEffect(() => {
+        console.log("VENDOR DASHBOARD CHECK:", { loaded, currentUser })
         if (!loaded) return
         if (!currentUser) {
+            console.log("REDIRECTING — no currentUser")
             router.push("/login")
             return
         }
         if (currentUser.role !== "vendor"){
+            console.log("REDIRECTING — wrong role:", currentUser.role)
             router.push("/")
         }
     }, [currentUser, loaded, router])

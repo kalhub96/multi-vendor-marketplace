@@ -1,17 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { User, Product, ProductCategory } from "@/types"
+import { Product, ProductCategory } from "@/types"
 import { products as mockProducts } from "@/data/products"
 import { useAuth } from "@/lib/auth-context"
 
 export default function VendorProductsPage() {
   const router = useRouter()
-  const { loaded } = useAuth()
-  const [currentUser, setCurrentUser] = useState<User | null>(null)
-  const [checking, setChecking] = useState(true)
+  const { currentUser, loaded } = useAuth()
   const [products, setProducts] = useState<Product[]>([])
   const [showForm, setShowForm] = useState(false)
 
@@ -22,6 +20,8 @@ export default function VendorProductsPage() {
   const [stock, setStock] = useState("")
   const [category, setCategory] = useState<ProductCategory>("electronics")
   const [formError, setFormError] = useState("")
+  const [imagePreview, setImagePreview] = useState<string>("")
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // AUTH CHECK
   useEffect(() => {
@@ -30,8 +30,9 @@ export default function VendorProductsPage() {
       router.push("/login")
       return
     }
-    if (currentUser.role !== "vendor"){
+    if (currentUser.role !== "vendor") {
       router.push("/")
+      return
     }
     setProducts(mockProducts.filter((p) => p.vendorId === "vendor_1"))
   }, [currentUser, loaded, router])
@@ -42,6 +43,38 @@ export default function VendorProductsPage() {
         <p className="text-gray-400">Loading...</p>
       </main>
     )
+  }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith("image/")) {
+      setFormError("Please select a valid image file")
+      return
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setFormError("Image must be smaller than 2MB")
+      return
+    }
+
+    setFormError("")
+
+    // CONVERT TO BASE64
+    const reader = new FileReader()
+    reader.onload = () => {
+      setImagePreview(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  // REMOVE SELECTED IMAGE
+  const handleRemoveImage = () => {
+    setImagePreview("")
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
   }
 
   // ADD PRODUCT HANDLER
@@ -71,7 +104,7 @@ export default function VendorProductsPage() {
       name,
       description,
       price: Number(price) / 160,
-      image: "/products/placeholder.jpg",
+      image: imagePreview || "/products/placeholder.jpg",
       category,
       stock: Number(stock),
       createdAt: new Date().toISOString(),
@@ -85,6 +118,8 @@ export default function VendorProductsPage() {
     setPrice("")
     setStock("")
     setCategory("electronics")
+    setImagePreview("")
+    if (fileInputRef.current) fileInputRef.current.value = ""
     setShowForm(false)
   }
 
@@ -135,6 +170,48 @@ export default function VendorProductsPage() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              {/* IMAGE UPLOAD */}
+              <div className="md:col-span-2">
+                <label className="text-sm text-gray-400 mb-1 block">
+                  Product Image
+                </label>
+
+                {imagePreview ? (
+                  <div className="relative w-full h-48 rounded-lg overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={imagePreview}
+                      alt="Product preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute top-2 right-2 bg-gray-900/80 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-full h-48 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-750 border-2 border-dashed border-gray-700 transition-colors">
+                    <span className="text-3xl mb-2">📷</span>
+                    <span className="text-gray-400 text-sm">
+                      Click to upload product image
+                    </span>
+                    <span className="text-gray-600 text-xs mt-1">
+                      PNG, JPG up to 2MB
+                    </span>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
 
               {/* NAME */}
               <div>
@@ -247,12 +324,28 @@ export default function VendorProductsPage() {
                 key={product.id}
                 className="grid grid-cols-5 gap-4 px-6 py-4 border-t border-gray-800 items-center hover:bg-gray-800/50 transition-colors"
               >
-                {/* NAME + DESCRIPTION */}
-                <div className="col-span-2">
-                  <p className="font-medium">{product.name}</p>
-                  <p className="text-gray-400 text-sm line-clamp-1">
-                    {product.description}
-                  </p>
+                {/* IMAGE + NAME + DESCRIPTION */}
+                <div className="col-span-2 flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-800 shrink-0">
+                    {product.image && product.image.startsWith("data:") ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                        Img
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium">{product.name}</p>
+                    <p className="text-gray-400 text-sm line-clamp-1">
+                      {product.description}
+                    </p>
+                  </div>
                 </div>
 
                 {/* CATEGORY */}

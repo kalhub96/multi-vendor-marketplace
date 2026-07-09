@@ -1,20 +1,15 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { User } from "@/types"
 import { products } from "@/data/products"
 import { users, vendors } from "@/data/users"
 import { orders } from "@/data/orders"
 import { useAuth } from "@/lib/auth-context"
 
-
 export default function AdminDashboardPage() {
   const router = useRouter()
-  const { loaded } = useAuth()
-  const [currentUser, setCurrentUser] = useState<User | null>(null)
-  const [checking, setChecking] = useState(true)
+  const { currentUser, loaded } = useAuth()
   const [activeTab, setActiveTab] = useState<"overview" | "vendors" | "products">("overview")
   const [allProducts, setAllProducts] = useState(products)
 
@@ -25,7 +20,7 @@ export default function AdminDashboardPage() {
       router.push("/login")
       return
     }
-    if (currentUser.role !== "admin"){
+    if (currentUser.role !== "admin") {
       router.push("/")
     }
   }, [currentUser, loaded, router])

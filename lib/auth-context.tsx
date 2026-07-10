@@ -2,11 +2,13 @@
 
 import { createContext, useContext, useState, useEffect } from "react"
 import { User } from "@/types"
+import { Update } from "next/dist/build/swc/types"
 
 type AuthContextType = {
     currentUser: User | null
     login: (User: User) => void
     logout: () => void
+    updateUser: (updates: Partial<User>) => void
     loaded: boolean
 }
 
@@ -39,8 +41,18 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
     setCurrentUser(null)
   }
 
+  // UPDATE USER — MERGE CHANGES INTO CURRENT USER
+  const updateUser = (updates:Partial<User>) => {
+    setCurrentUser((prev) => {
+    if (!prev) return prev
+    const updated = { ...prev, ...updates }
+    localStorage.setItem("currentUser", JSON.stringify(updated))
+    return updated
+  })
+  }
+
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout, loaded }}>
+    <AuthContext.Provider value={{ currentUser, login, logout, updateUser, loaded }}>
         {children}
     </AuthContext.Provider>
   )

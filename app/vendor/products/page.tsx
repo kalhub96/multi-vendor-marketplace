@@ -6,11 +6,16 @@ import { useRouter } from "next/navigation"
 import { Product, ProductCategory } from "@/types"
 import { useAuth } from "@/lib/auth-context"
 import { useProducts } from "@/lib/products-context"
+import { useUsers } from "@/lib/users-context"
 
 export default function VendorProductsPage() {
   const router = useRouter()
   const { currentUser, loaded } = useAuth()
   const { products: allProducts, addProduct, deleteProduct } = useProducts()
+  const { getUserById } = useUsers()
+// GET LIVE STATUS — in case admin suspended this account after login
+  const liveUser = currentUser ? getUserById(currentUser.id) : undefined
+  const isSuspended = liveUser?.status === "suspended"
   const [showForm, setShowForm] = useState(false)
 
   // FORM STATE
@@ -147,15 +152,27 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
               {products.length} products in your store
             </p>
           </div>
-          <button
+          {!isSuspended && (
+            <button
             type="button"
             onClick={() => setShowForm(!showForm)}
-            className="bg-green-400 text-gray-900 font-semibold px-6 py-3 rounded-full hover:bg-green-300 transition-colors"
-          >
-            {showForm ? "Cancel" : "+ Add Product"}
-          </button>
+            className="bg-green-400 text-gray-900 font-semibold px-6 py-3 rounded-full hover:bg-green-300 transition-colors">
+              {showForm ? "Cancel" : "+ Add Product"}
+            </button>
+          )}
         </div>
       </section>
+
+      {isSuspended && (
+        <section className="max-w-6xl mx-auto px-8 pt-6">
+          <div className="bg-yellow-900/50 border border-yellow-500 text-yellow-300 px-6 py-4 rounded-lg">
+            <p className="font-semibold">Your account is suspended</p>
+            <p className="text-sm mt-1">
+              You cannot add or edit products while suspended. Contact support if you believe this is a mistake.
+            </p>
+          </div>
+        </section>
+      )}
 
       <section className="max-w-6xl mx-auto px-8 py-10">
 

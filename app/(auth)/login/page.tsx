@@ -3,12 +3,13 @@
 import { use , useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { users } from "@/data/users"
+import { useUsers } from "@/lib/users-context"
 import { useAuth } from "@/lib/auth-context"
 
 export default function LoginPage() {
     const router = useRouter()
     const { login } = useAuth()
+    const { users } = useUsers()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
@@ -29,15 +30,21 @@ export default function LoginPage() {
 
         setLoading(true)
         setTimeout(() => {
-        const user = users.find((u) => u.email === email)
+            const user = users.find((u) => u.email === email)
 
-        if (!user) {
-            setError("no account found with this email")
-            setLoading(false)
-            return
-        }
+            if (!user) {
+                setError("no account found with this email")
+                setLoading(false)
+                return
+            }
 
-        login(user)
+            if (user.status === "banned") {
+                setError("This account has been banned. Contact support for help.")
+                setLoading(false)
+                return
+            }
+
+            login(user)
 
         if (user.role === "admin"){
             router.push("/admin/dashboard")

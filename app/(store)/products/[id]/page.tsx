@@ -8,6 +8,7 @@ import { useProducts } from "@/lib/products-context"
 import { orders } from "@/data/orders"
 import { useCart } from "@/lib/cart-context"
 import { useRatings } from "@/lib/ratings-context"
+import { useUsers } from "@/lib/users-context"
 import { User } from "@/types"
 import StarRating from "@/components/star-rating"
 
@@ -29,6 +30,10 @@ export default function ProductDetailPage({
 
   const { addToCart } = useCart()
   const { products } = useProducts()
+  const { getUserById } = useUsers()
+  
+  const liveUser = currentUser ? getUserById(currentUser.id) : undefined
+  const isSuspended = liveUser?.status === "suspended"
   
   const {
     getProductRatings,
@@ -251,13 +256,24 @@ export default function ProductDetailPage({
             )}
 
             
-            {currentUser &&
-              currentUser.role === "buyer" &&
-              !hasPurchased && (
-                <p className="text-gray-400">
-                  Purchase this product to leave a review
-                </p>
-              )}
+            {/* SUSPENDED BUYER */}
+{currentUser &&
+  currentUser.role === "buyer" &&
+  isSuspended && (
+    <p className="text-yellow-400">
+      Your account is restricted and cannot leave reviews right now.
+    </p>
+  )}
+
+{/* BUYER BUT HASN'T PURCHASED */}
+{currentUser &&
+  currentUser.role === "buyer" &&
+  !isSuspended &&
+  !hasPurchased && (
+    <p className="text-gray-400">
+      Purchase this product to leave a review
+    </p>
+  )}
 
             
             {currentUser &&
@@ -282,6 +298,7 @@ export default function ProductDetailPage({
              
             {currentUser &&
               currentUser.role === "buyer" &&
+              !isSuspended &&
               hasPurchased &&
               !alreadyRated &&
               !ratingSubmitted && (

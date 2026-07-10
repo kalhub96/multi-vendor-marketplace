@@ -6,6 +6,7 @@ export const users: User[] = [
     name: "John Buyer",
     email: "john@example.com",
     role: "buyer",
+    status: "active",
     createdAt: "2024-01-01",
 },
 
@@ -14,6 +15,7 @@ export const users: User[] = [
     name: "Sarah Vendor",
     email: "sarah@example.com",
     role: "vendor",
+    status: "active",
     createdAt: "2024-01-02",
 },
 
@@ -22,6 +24,7 @@ export const users: User[] = [
     name: "Admin User",
     email: "admin@example.com",
     role: "admin",
+    status: "active",
     createdAt: "2024-01-03",
 },
 ]

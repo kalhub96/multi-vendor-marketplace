@@ -2,16 +2,18 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { users, vendors } from "@/data/users"
+import { vendors } from "@/data/users"
 import { orders } from "@/data/orders"
 import { useProducts } from "@/lib/products-context"
+import { useUsers } from "@/lib/users-context"
 import { useAuth } from "@/lib/auth-context"
 
 export default function AdminDashboardPage() {
-  const router = useRouter()
-  const { currentUser, loaded } = useAuth()
-  const { products: allProducts, deleteProduct } = useProducts()
-  const [activeTab, setActiveTab] = useState<"overview" | "vendors" | "products">("overview")
+ const router = useRouter()
+ const { currentUser, loaded } = useAuth()
+ const { products: allProducts, deleteProduct } = useProducts()
+ const { users, banUser, unbanUser, suspendUser, activateUser } = useUsers()
+ const [activeTab, setActiveTab] = useState<"overview" | "vendors" | "products">("overview")
 
   // AUTH CHECK — ADMIN ONLY
   useEffect(() => {
@@ -101,31 +103,88 @@ export default function AdminDashboardPage() {
         {activeTab === "overview" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <div className="bg-gray-900 rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4">All Users</h2>
-              <div className="flex flex-col gap-3">
-                {users.map((user) => (
-                  <div
-                    key={user.id}
-                    className="flex items-center justify-between bg-gray-800 rounded-lg p-4"
-                  >
-                    <div>
-                      <p className="font-medium">{user.name}</p>
-                      <p className="text-gray-400 text-sm">{user.email}</p>
-                    </div>
-                    <span className={`text-xs font-semibold px-3 py-1 rounded-full capitalize ${
-                      user.role === "admin"
-                        ? "bg-purple-900 text-purple-300"
-                        : user.role === "vendor"
-                        ? "bg-blue-900 text-blue-300"
-                        : "bg-gray-700 text-gray-300"
-                    }`}>
-                      {user.role}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* RECENT USERS */}
+<div className="bg-gray-900 rounded-xl p-6">
+  <h2 className="text-xl font-bold mb-4">All Users</h2>
+  <div className="flex flex-col gap-3">
+    {users.map((user) => (
+      <div
+        key={user.id}
+        className="flex flex-col gap-3 bg-gray-800 rounded-lg p-4"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-medium">{user.name}</p>
+            <p className="text-gray-400 text-sm">{user.email}</p>
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            <span className={`text-xs font-semibold px-3 py-1 rounded-full capitalize ${
+              user.role === "admin"
+                ? "bg-purple-900 text-purple-300"
+                : user.role === "vendor"
+                ? "bg-blue-900 text-blue-300"
+                : "bg-gray-700 text-gray-300"
+            }`}>
+              {user.role}
+            </span>
+            <span className={`text-xs font-semibold px-3 py-1 rounded-full capitalize ${
+              user.status === "banned"
+                ? "bg-red-900 text-red-300"
+                : user.status === "suspended"
+                ? "bg-yellow-900 text-yellow-300"
+                : "bg-green-900 text-green-300"
+            }`}>
+              {user.status}
+            </span>
+          </div>
+        </div>
+
+        {/* MODERATION CONTROLS — don't show for admins */}
+        {user.role !== "admin" && (
+          <div className="flex gap-2 pt-2 border-t border-gray-700">
+            {user.status === "banned" ? (
+              <button
+                type="button"
+                onClick={() => unbanUser(user.id)}
+                className="text-xs font-medium text-green-400 hover:text-green-300 transition-colors"
+              >
+                Unban User
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => banUser(user.id)}
+                className="text-xs font-medium text-red-400 hover:text-red-300 transition-colors"
+              >
+                Ban User
+              </button>
+            )}
+
+            {user.status === "suspended" ? (
+              <button
+                type="button"
+                onClick={() => activateUser(user.id)}
+                className="text-xs font-medium text-green-400 hover:text-green-300 transition-colors"
+              >
+                Remove Suspension
+              </button>
+            ) : (
+              user.status !== "banned" && (
+                <button
+                  type="button"
+                  onClick={() => suspendUser(user.id)}
+                  className="text-xs font-medium text-yellow-400 hover:text-yellow-300 transition-colors"
+                >
+                  Suspend User
+                </button>
+              )
+            )}
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+</div>
 
             <div className="bg-gray-900 rounded-xl p-6">
               <h2 className="text-xl font-bold mb-4">Platform Stats</h2>

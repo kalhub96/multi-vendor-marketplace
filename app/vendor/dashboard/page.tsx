@@ -91,17 +91,20 @@ export default function VendorDashboredPage() {
                 </div>
             </div>
 
-            <div className="flex flex-row items-center gap-4 mb-10">
+            <div className="flex flex-row items-center gap-4 mb-10 flex-wrap">
                 <Link
-                    href="/vendor/products"
-                    className="bg-green-400 text-gray-900 font-semibold px-6 py-3 rounded-full hover:bg-green-300 transition-colors"
-                >
+                href="/vendor/products"
+                className="bg-green-400 text-gray-900 font-semibold px-6 py-3 rounded-full hover:bg-green-300 transition-colors">
                     Manage Products
                 </Link>
                 <Link
-                    href="/products"
-                    className="bg-gray-800 text-white font-semibold px-6 py-3 rounded-full hover:bg-gray-700 transition-colors"
-                >
+                href="/vendor/orders"
+                className="bg-gray-800 text-white font-semibold px-6 py-3 rounded-full hover:bg-gray-700 transition-colors">
+                    View Orders
+                </Link>
+                <Link
+                href="/products"
+                className="bg-gray-800 text-white font-semibold px-6 py-3 rounded-full hover:bg-gray-700 transition-colors">
                     View Storefront
                 </Link>
             </div>

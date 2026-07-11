@@ -117,12 +117,11 @@ export default function CartPage() {
                 <span>Total</span>
                 <span className="text-green-400">ETB {cartTotal.toFixed(2)}</span>
               </div>
-              <button
-                type="button"
-                className="w-full bg-green-400 text-gray-900 font-bold py-4 rounded-full hover:bg-green-300 transition-colors text-lg"
-              >
+              <Link
+              href="/checkout"
+              className="block text-center w-full bg-green-400 text-gray-900 font-bold py-4 rounded-full hover:bg-green-300 transition-colors text-lg">
                 Proceed to Checkout
-              </button>
+              </Link>
               <Link
                 href="/products"
                 className="block text-center text-gray-400 hover:text-white mt-4 transition-colors"

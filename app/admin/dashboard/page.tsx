@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { vendors } from "@/data/users"
-import { orders } from "@/data/orders"
 import { useProducts } from "@/lib/products-context"
 import { useUsers } from "@/lib/users-context"
+import { useOrders } from "@/lib/orders-context"
 import { useAuth } from "@/lib/auth-context"
 
 export default function AdminDashboardPage() {
@@ -13,6 +13,7 @@ export default function AdminDashboardPage() {
  const { currentUser, loaded } = useAuth()
  const { products: allProducts, deleteProduct } = useProducts()
  const { users, banUser, unbanUser, suspendUser, activateUser } = useUsers()
+ const { orders } = useOrders()
  const [activeTab, setActiveTab] = useState<"overview" | "vendors" | "products">("overview")
 
   // AUTH CHECK — ADMIN ONLY
@@ -58,30 +59,33 @@ export default function AdminDashboardPage() {
 
       <section className="max-w-6xl mx-auto px-8 py-10">
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <div className="bg-gray-900 rounded-xl p-6">
-            <p className="text-gray-400 text-sm mb-2">Total Users</p>
-            <p className="text-3xl font-bold text-green-400">
-              {users.length}
-            </p>
-          </div>
-          <div className="bg-gray-900 rounded-xl p-6">
-            <p className="text-gray-400 text-sm mb-2">Total Vendors</p>
-            <p className="text-3xl font-bold text-green-400">
-              {vendors.length}
-            </p>
-          </div>
-          <div className="bg-gray-900 rounded-xl p-6">
-            <p className="text-gray-400 text-sm mb-2">Total Products</p>
-            <p className="text-3xl font-bold text-green-400">
-              {allProducts.length}
-            </p>
-          </div>
-          <div className="bg-gray-900 rounded-xl p-6">
-            <p className="text-gray-400 text-sm mb-2">Total Orders</p>
-            <p className="text-3xl font-bold text-green-400">{orders.length}</p>
-          </div>
-        </div>
+        {/* STATS GRID */}
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+  <div className="bg-gray-900 rounded-xl p-6">
+    <p className="text-gray-400 text-sm mb-2">Total Users</p>
+    <p className="text-3xl font-bold text-green-400">
+      {users.length}
+    </p>
+  </div>
+  <div className="bg-gray-900 rounded-xl p-6">
+    <p className="text-gray-400 text-sm mb-2">Total Vendors</p>
+    <p className="text-3xl font-bold text-green-400">
+      {vendors.length}
+    </p>
+  </div>
+  <div className="bg-gray-900 rounded-xl p-6">
+    <p className="text-gray-400 text-sm mb-2">Total Products</p>
+    <p className="text-3xl font-bold text-green-400">
+      {allProducts.length}
+    </p>
+  </div>
+  <div className="bg-gray-900 rounded-xl p-6">
+    <p className="text-gray-400 text-sm mb-2">Total Orders</p>
+    <p className="text-3xl font-bold text-green-400">
+      {orders.length}
+    </p>
+  </div>
+</div>
 
         <div className="flex gap-3 mb-8">
           {(["overview", "vendors", "products"] as const).map((tab) => (
@@ -186,53 +190,119 @@ export default function AdminDashboardPage() {
   </div>
 </div>
 
-            <div className="bg-gray-900 rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4">Platform Stats</h2>
-              <div className="flex flex-col gap-4">
-                <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
-                  <span className="text-gray-400">Total Revenue</span>
-                  <span className="text-green-400 font-bold">
-                    ETB {allProducts.reduce((sum, p) => sum + p.price * 160, 0).toFixed(0)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
-                  <span className="text-gray-400">Avg Product Price</span>
-                  <span className="text-green-400 font-bold">
-                    ETB {(allProducts.reduce((sum, p) => sum + p.price * 160, 0) / allProducts.length).toFixed(0)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
-                  <span className="text-gray-400">Total Stock Units</span>
-                  <span className="text-green-400 font-bold">
-                    {allProducts.reduce((sum, p) => sum + p.stock, 0)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
-                  <span className="text-gray-400">Active Vendors</span>
-                  <span className="text-green-400 font-bold">
-                    {vendors.length}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
-                  <span className="text-gray-400">Categories</span>
-                  <span className="text-green-400 font-bold">
-                    {new Set(allProducts.map((p) => p.category)).size}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
-                  <span className="text-gray-400">Pending Orders</span>
-                  <span className="text-yellow-400 font-bold">
-                    {orders.filter((o) => o.status === "pending").length}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
-                  <span className="text-gray-400">Delivered Orders</span>
-                  <span className="text-green-400 font-bold">
-                    {orders.filter((o) => o.status === "delivered").length}
-                  </span>
-                </div>
-              </div>
-            </div>
+            {/* PLATFORM STATS */}
+<div className="bg-gray-900 rounded-xl p-6">
+  <h2 className="text-xl font-bold mb-4">Platform Stats</h2>
+  <div className="flex flex-col gap-3">
+
+    {/* REVENUE — from real completed orders, not just product catalog value */}
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Total Revenue (Delivered)</span>
+      <span className="text-green-400 font-bold">
+        ETB{" "}
+        {orders
+          .filter((o) => o.status === "delivered")
+          .reduce((sum, o) => sum + o.totalAmount, 0)
+          .toFixed(0)}
+      </span>
+    </div>
+
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Revenue In Progress</span>
+      <span className="text-blue-400 font-bold">
+        ETB{" "}
+        {orders
+          .filter((o) => ["pending", "processing", "shipped"].includes(o.status))
+          .reduce((sum, o) => sum + o.totalAmount, 0)
+          .toFixed(0)}
+      </span>
+    </div>
+
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Avg Product Price</span>
+      <span className="text-green-400 font-bold">
+        ETB{" "}
+        {allProducts.length > 0
+          ? (
+              allProducts.reduce((sum, p) => sum + p.price * 160, 0) /
+              allProducts.length
+            ).toFixed(0)
+          : "0"}
+      </span>
+    </div>
+
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Total Stock Units</span>
+      <span className="text-green-400 font-bold">
+        {allProducts.reduce((sum, p) => sum + p.stock, 0)}
+      </span>
+    </div>
+
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Categories</span>
+      <span className="text-green-400 font-bold">
+        {new Set(allProducts.map((p) => p.category)).size}
+      </span>
+    </div>
+
+    <div className="border-t border-gray-800 my-1" />
+
+    {/* ORDER STATUS BREAKDOWN */}
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Pending Orders</span>
+      <span className="text-yellow-400 font-bold">
+        {orders.filter((o) => o.status === "pending").length}
+      </span>
+    </div>
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Processing Orders</span>
+      <span className="text-blue-400 font-bold">
+        {orders.filter((o) => o.status === "processing").length}
+      </span>
+    </div>
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Shipped Orders</span>
+      <span className="text-purple-400 font-bold">
+        {orders.filter((o) => o.status === "shipped").length}
+      </span>
+    </div>
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Delivered Orders</span>
+      <span className="text-green-400 font-bold">
+        {orders.filter((o) => o.status === "delivered").length}
+      </span>
+    </div>
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Cancelled Orders</span>
+      <span className="text-red-400 font-bold">
+        {orders.filter((o) => o.status === "cancelled").length}
+      </span>
+    </div>
+
+    <div className="border-t border-gray-800 my-1" />
+
+    {/* USER MODERATION SNAPSHOT */}
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Active Users</span>
+      <span className="text-green-400 font-bold">
+        {users.filter((u) => u.status === "active").length}
+      </span>
+    </div>
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Suspended Users</span>
+      <span className="text-yellow-400 font-bold">
+        {users.filter((u) => u.status === "suspended").length}
+      </span>
+    </div>
+    <div className="flex justify-between items-center bg-gray-800 rounded-lg p-4">
+      <span className="text-gray-400">Banned Users</span>
+      <span className="text-red-400 font-bold">
+        {users.filter((u) => u.status === "banned").length}
+      </span>
+    </div>
+
+  </div>
+</div>
           </div>
         )}
 

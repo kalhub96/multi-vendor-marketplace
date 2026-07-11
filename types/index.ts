@@ -46,11 +46,20 @@ export type CartItem = {
 }
 
 export type OrderStatus =
-| "pending"
-| "processing"
-| "shipped"
-| "delivered"
-| "cancelled"
+  | "pending"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled"
+
+export type ShippingInfo = {
+  fullName: string
+  phone: string
+  city: string
+  address: string
+}
+
+export type PaymentMethod = "chapa" | "telebirr" | "cash_on_delivery"
 
 export type Order = {
   id: string
@@ -58,6 +67,8 @@ export type Order = {
   items: CartItem[]
   totalAmount: number
   status: OrderStatus
+  shippingInfo: ShippingInfo
+  paymentMethod: PaymentMethod
   createdAt: string
 }
 

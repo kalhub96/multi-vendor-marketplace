@@ -22,6 +22,13 @@ export const orders: Order[] = [
     ],
     totalAmount: 15998.40,
     status: "delivered",
+    shippingInfo: {
+      fullName: "John Buyer",
+      phone: "0911223344",
+      city: "Addis Ababa",
+      address: "Bole Road, near Edna Mall",
+    },
+    paymentMethod: "telebirr",
     createdAt: "2024-02-01",
   },
   {
@@ -45,6 +52,13 @@ export const orders: Order[] = [
     ],
     totalAmount: 47996.80,
     status: "shipped",
+    shippingInfo: {
+      fullName: "John Buyer",
+      phone: "0911223344",
+      city: "Addis Ababa",
+      address: "Bole Road, near Edna Mall",
+    },
+    paymentMethod: "chapa",
     createdAt: "2024-02-05",
   },
   {
@@ -68,6 +82,13 @@ export const orders: Order[] = [
     ],
     totalAmount: 6235.20,
     status: "processing",
+    shippingInfo: {
+      fullName: "John Buyer",
+      phone: "0911223344",
+      city: "Addis Ababa",
+      address: "Bole Road, near Edna Mall",
+    },
+    paymentMethod: "cash_on_delivery",
     createdAt: "2024-02-10",
   },
   {
@@ -91,6 +112,13 @@ export const orders: Order[] = [
     ],
     totalAmount: 9598.40,
     status: "pending",
+    shippingInfo: {
+      fullName: "John Buyer",
+      phone: "0911223344",
+      city: "Addis Ababa",
+      address: "Bole Road, near Edna Mall",
+    },
+    paymentMethod: "telebirr",
     createdAt: "2024-02-12",
   },
 ]

@@ -5,7 +5,7 @@ import Link from "next/link"
 import { use } from "react"
 import { vendors } from "@/data/users"
 import { useProducts } from "@/lib/products-context"
-import { orders } from "@/data/orders"
+import { useOrders } from "@/lib/orders-context"
 import { useCart } from "@/lib/cart-context"
 import { useRatings } from "@/lib/ratings-context"
 import { useUsers } from "@/lib/users-context"
@@ -31,6 +31,7 @@ export default function ProductDetailPage({
   const { addToCart } = useCart()
   const { products } = useProducts()
   const { getUserById } = useUsers()
+  const { orders } = useOrders()
   
   const liveUser = currentUser ? getUserById(currentUser.id) : undefined
   const isSuspended = liveUser?.status === "suspended"

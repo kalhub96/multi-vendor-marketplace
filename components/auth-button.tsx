@@ -59,11 +59,21 @@ export default function AuthButton() {
         </Link>
       )}
 
-      {/* PROFILE LINK */}
-      <Link
-        href="/profile"
-        className="flex items-center gap-2 hover:text-green-400 transition-colors"
-      >
+      {/* MY ORDERS — buyers only */}
+{currentUser.role === "buyer" && (
+  <Link
+    href="/orders"
+    className="hover:text-green-400 transition-colors text-sm"
+  >
+    My Orders
+  </Link>
+)}
+
+{/* PROFILE LINK */}
+<Link
+  href="/profile"
+  className="flex items-center gap-2 hover:text-green-400 transition-colors"
+>
         <div className="w-8 h-8 rounded-full bg-green-400 text-gray-900 flex items-center justify-center font-bold text-sm">
           {currentUser.name.charAt(0).toUpperCase()}
         </div>

@@ -1,7 +1,8 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect} from "react";
-import { CartItem, Product } from "@/types";
+import { createContext, useContext, useState, useEffect } from "react"
+import { CartItem, Product } from "@/types"
+import { useAuth } from "@/lib/auth-context"
 
 type CartContextType = {
     cartItems: CartItem[]
@@ -17,26 +18,36 @@ type CartContextType = {
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-    const [cartItems, setCartItems] = useState<CartItem[]>([])
-    const [loaded, setLoaded] = useState(false)
+  const { currentUser, loaded: authLoaded } = useAuth()
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [loaded, setLoaded] = useState(false)
 
+  // BUILD A CART KEY SPECIFIC TO THE LOGGED-IN USER
+  // Guests (not logged in) share a temporary "guest" cart
+  const getCartKey = (userId: string | undefined) =>
+    userId ? `cart_${userId}` : "cart_guest"
 
+  // LOAD THE CORRECT CART WHENEVER THE LOGGED-IN USER CHANGES
+  useEffect(() => {
+    if (!authLoaded) return
 
-    useEffect(() => {
-        try {
-            const stored = localStorage.getItem("cart")
-            if (stored) setCartItems(JSON.parse(stored))
-        } catch {
-            setCartItems([]);
-        }
-        setLoaded(true)
-    }, [])
+    try {
+      const key = getCartKey(currentUser?.id)
+      const stored = localStorage.getItem(key)
+      setCartItems(stored ? JSON.parse(stored) : [])
+    } catch {
+      setCartItems([])
+    }
+    setLoaded(true)
+  }, [currentUser, authLoaded])
 
-    useEffect(() => {
-        if (loaded) {
-            localStorage.setItem("cart", JSON.stringify(cartItems))
-        }
-    }, [cartItems, loaded])
+  // SAVE TO THE CORRECT USER'S KEY EVERY TIME CART CHANGES
+  useEffect(() => {
+    if (loaded && authLoaded) {
+      const key = getCartKey(currentUser?.id)
+      localStorage.setItem(key, JSON.stringify(cartItems))
+    }
+  }, [cartItems, loaded, authLoaded, currentUser])
 
     const addToCart = (product: Product, quantity: number) => {
         setCartItems((prev) => {

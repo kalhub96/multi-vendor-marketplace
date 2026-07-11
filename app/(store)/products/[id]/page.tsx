@@ -20,6 +20,8 @@ export default function ProductDetailPage({
   const { id } = use(params)
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
+  const [mlRecommendations, setMlRecommendations] = useState<string[]>([])
+  const [mlLoading, setMlLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState<User | null>(null)
 
   // RATING FORM STATE
@@ -48,6 +50,36 @@ export default function ProductDetailPage({
     const stored = localStorage.getItem("currentUser")
     if (stored) setCurrentUser(JSON.parse(stored))
   }, [])
+
+// FETCH ML RECOMMENDATIONS FROM PYTHON API
+useEffect(() => {
+  if (!currentUser) {
+    setMlLoading(false)
+    return
+  }
+
+  const fetchMlRecommendations = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/recommendations/${currentUser.id}`
+      )
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch recommendations")
+      }
+
+      const data = await response.json()
+      setMlRecommendations(data.recommended_product_ids)
+    } catch (error) {
+      console.log("ML server not reachable — skipping ML recommendations", error)
+      setMlRecommendations([])
+    } finally {
+      setMlLoading(false)
+    }
+  }
+
+  fetchMlRecommendations()
+}, [currentUser])
 
   const product = products.find((p) => p.id === id)
   const vendor = vendors.find((v) => v.id === product?.vendorId)
@@ -414,6 +446,56 @@ export default function ProductDetailPage({
             </div>
           )}
         </div>
+
+        {/* ML-POWERED RECOMMENDATIONS */}
+{currentUser && !mlLoading && mlRecommendations.length > 0 && (
+  <div className="mt-16">
+    <div className="flex items-center gap-2 mb-8">
+      <h2 className="text-2xl font-bold">Recommended For You</h2>
+      <span className="text-xs bg-purple-900 text-purple-300 px-2 py-1 rounded-full font-medium">
+        AI Powered
+      </span>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {mlRecommendations.map((productId) => {
+        const mlProduct = products.find((p) => p.id === productId)
+        if (!mlProduct) return null
+
+        return (
+          <Link
+            key={mlProduct.id}
+            href={`/products/${mlProduct.id}`}
+            className="bg-gray-900 rounded-xl overflow-hidden hover:ring-2 hover:ring-purple-400 transition-all"
+          >
+            <div className="bg-gray-800 h-40 flex items-center justify-center overflow-hidden">
+              {mlProduct.image && mlProduct.image.startsWith("data:") ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={mlProduct.image}
+                  alt={mlProduct.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-gray-600 text-sm">No Image Yet</span>
+              )}
+            </div>
+            <div className="p-4">
+              <span className="text-xs text-purple-400 uppercase tracking-wide">
+                {mlProduct.category}
+              </span>
+              <h3 className="font-semibold mt-1 mb-1 line-clamp-1">
+                {mlProduct.name}
+              </h3>
+              <p className="text-green-400 font-bold">
+                ETB {(mlProduct.price * 160).toFixed(2)}
+              </p>
+            </div>
+          </Link>
+        )
+      })}
+    </div>
+  </div>
+)}
 
         {/* RECOMMENDATIONS */}
         {recommendations.length > 0 && (

@@ -51,6 +51,33 @@ export default function ProductDetailPage({
 
   const product = products.find((p) => p.id === id)
   const vendor = vendors.find((v) => v.id === product?.vendorId)
+
+  // GET RECOMMENDED PRODUCTS
+  const getRecommendations = () => {
+    if (!product) return []
+
+    // SAME CATEGORY, EXCLUDING CURRENT PRODUCT
+    const sameCategory = products.filter(
+      (p) => p.category === product.category && p.id !== product.id
+    )
+
+    if (sameCategory.length >= 4) {
+      return sameCategory.slice(0, 4)
+    }
+
+    // NOT ENOUGH — ADD SAME VENDOR PRODUCTS
+    const sameVendor = products.filter(
+      (p) => p.vendorId === product.vendorId && p.id !== product.id
+    )
+
+    // COMBINE AND REMOVE DUPLICATES
+    const combined = [...sameCategory, ...sameVendor]
+    const unique = combined.filter(
+      (p, index, self) => index === self.findIndex((item) => item.id === p.id)
+    )
+    return unique.slice(0, 4)
+  }
+  const recommendations = getRecommendations()
   const productRatings = getProductRatings(id)
   const averageRating = getProductAverage(id)
 
@@ -387,6 +414,43 @@ export default function ProductDetailPage({
             </div>
           )}
         </div>
+
+        {/* RECOMMENDATIONS */}
+        {recommendations.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold mb-8">You Might Also Like</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {recommendations.map((rec) => (
+                <Link
+                key={rec.id}
+                href={`/products/${rec.id}`}
+                className="bg-gray-900 rounded-xl overflow-hidden hover:ring-2 hover:ring-green-400 transition-all">
+                  <div className="bg-gray-800 h-40 flex items-center justify-center overflow-hidden">
+                    {rec.image && rec.image.startsWith("data:") ?(
+                      <img
+                      src={rec.image}
+                       alt={rec.name}
+                      className="w-full h-full object-cover"/>
+                    ): (
+                      <span className="text-gray-600 text-sm">No Image Yet</span>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <span className="text-xs text-green-400 uppercase tracking-wide">
+                      {rec.category}
+                    </span>
+                    <h3 className="font-semibold mt-1 mb-1 line-clamp-1">
+                      {rec.name}
+                    </h3>
+                    <p className="text-green-400 font-bold">
+                      ETB {(rec.price*160).toFixed(2)}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
       </section>
     </main>

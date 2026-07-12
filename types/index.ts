@@ -10,13 +10,16 @@ export type User = {
     createdAt: string
 }
 
+export type VerificationStatus = "unverified" | "pending" | "verified" | "rejected"
+
 export type Vendor = {
-    id: string
-    userId: string
-    storeName: string
-    description: string
-    logo: string
-    createdAt: string
+  id: string
+  userId: string
+  storeName: string
+  description: string
+  logo: string
+  verificationStatus: VerificationStatus
+  createdAt: string
 }
 
 export type ProductCategory =

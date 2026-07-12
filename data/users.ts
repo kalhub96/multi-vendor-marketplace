@@ -30,12 +30,13 @@ export const users: User[] = [
 ]
 
 export const vendors: Vendor[] = [
-    {
-        id: "vendor_1",
-        userId: "user_2",
-        storeName: "Sarah's Electronics",
-        description: "Best electronics at the best prices",
-        logo: "/vendors/sarah-store.png",
-        createdAt: "2024-01-02",
-    },
+  {
+    id: "vendor_1",
+    userId: "user_2",
+    storeName: "Sarah's Electronics",
+    description: "Best electronics at the best prices",
+    logo: "/vendors/sarah-store.png",
+    verificationStatus: "unverified",
+    createdAt: "2024-01-02",
+  },
 ]

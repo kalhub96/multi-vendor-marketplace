@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { User } from "@/types"
-import { vendors } from "@/data/users"
+import { useVendors } from "@/lib/vendors-context"
 import { orders } from "@/data/orders"
 import { useProducts } from "@/lib/products-context"
 import { useAuth } from "@/lib/auth-context"
@@ -13,6 +13,7 @@ export default function VendorDashboredPage() {
     const router = useRouter()
     const { currentUser, loaded } = useAuth()
     const { products } = useProducts()
+    const { getVendorByUserId } = useVendors()
 
     useEffect(() => {
         console.log("VENDOR DASHBOARD CHECK:", { loaded, currentUser })
@@ -37,7 +38,7 @@ export default function VendorDashboredPage() {
     }
 
     // find the vendor's store info
-    const vendorStore = vendors.find((v) => v.userId === currentUser?.id)
+    const vendorStore = currentUser ? getVendorByUserId(currentUser.id) : undefined
 
     // find the vendor's product
     const vendorProducts = products.filter((p) => p.vendorId === "vendor_1")
@@ -56,14 +57,35 @@ export default function VendorDashboredPage() {
                 <p className="text-green-400 text-sm font-medium mb-1">
                     Vendor Dashboard
                 </p>
-                <h1 className="text-3xl font-bold">
+                <h1 className="text-3xl font-bold flex items-center gap-2">
                     Welcome back, {vendorStore?.storeName || currentUser?.name}
+                    {vendorStore?.verificationStatus === "verified" && (
+                        <span className="text-green-400 text-xl" title="Verified Store">✓</span>
+                    )}
                 </h1>
                 <p className="text-gray-400 mt-2">
                     Here's what's happening with your store today
                 </p>
             </div>
         </section>
+        {vendorStore && vendorStore.verificationStatus !== "verified" && (
+          <section className="max-w-6xl mx-auto px-8 pt-6">
+            <div className="bg-yellow-900/50 border border-yellow-500 text-yellow-300 px-6 py-4 rounded-lg flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <p className="font-semibold">Get your store verified</p>
+                <p className="text-sm mt-1">
+                  Verified stores build more trust with buyers.
+                </p>
+              </div>
+              <Link
+                href="/vendor/verify-id"
+                className="bg-yellow-400 text-gray-900 font-semibold px-5 py-2 rounded-full hover:bg-yellow-300 transition-colors text-sm whitespace-nowrap"
+              >
+                Verify Now
+              </Link>
+            </div>
+          </section>
+        )}
 
         <section className="max-w-6xl mx-auto px-8 py-10">
 

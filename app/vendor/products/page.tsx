@@ -7,6 +7,7 @@ import { Product, ProductCategory } from "@/types"
 import { useAuth } from "@/lib/auth-context"
 import { useProducts } from "@/lib/products-context"
 import { useUsers } from "@/lib/users-context"
+import toast from "react-hot-toast"
 
 export default function VendorProductsPage() {
   const router = useRouter()
@@ -117,6 +118,7 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
     }
 
     addProduct(newProduct)
+    toast.success(`${newProduct.name} added to your store!`)
 
     // RESET FORM
     setName("")
@@ -132,6 +134,7 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
   // DELETE PRODUCT HANDLER
   const handleDelete = (productId: string) => {
   deleteProduct(productId)
+  toast.success("Product removed")
 }
 
   return (

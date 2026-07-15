@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { UserRole } from "@/types"
 import { useAuth } from "@/lib/auth-context"
+import toast from "react-hot-toast"
 
 export default function RegisterPage() {
     const { login } = useAuth()
@@ -40,10 +41,12 @@ export default function RegisterPage() {
                 name,
                 email,
                 role,
+                status: "active" as const,
                 createdAt: new Date().toISOString(),
             }
 
             login(newUser)
+            toast.success(`Welcome to MultiMart, ${newUser.name}!`)
 
             if (role === "vendor"){
                 window.location.href = "/vendor/dashbored"

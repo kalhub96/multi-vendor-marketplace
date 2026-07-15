@@ -7,6 +7,7 @@ import { useProducts } from "@/lib/products-context"
 import { useUsers } from "@/lib/users-context"
 import { useOrders } from "@/lib/orders-context"
 import { useAuth } from "@/lib/auth-context"
+import toast from "react-hot-toast"
 
 export default function AdminDashboardPage() {
  const router = useRouter()
@@ -147,42 +148,54 @@ export default function AdminDashboardPage() {
         {user.role !== "admin" && (
           <div className="flex gap-2 pt-2 border-t border-gray-700">
             {user.status === "banned" ? (
-              <button
-                type="button"
-                onClick={() => unbanUser(user.id)}
-                className="text-xs font-medium text-green-400 hover:text-green-300 transition-colors"
-              >
-                Unban User
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => banUser(user.id)}
-                className="text-xs font-medium text-red-400 hover:text-red-300 transition-colors"
-              >
-                Ban User
-              </button>
-            )}
+  <button
+    type="button"
+    onClick={() => {
+      unbanUser(user.id)
+      toast.success(`${user.name} unbanned`)
+    }}
+    className="text-xs font-medium text-green-400 hover:text-green-300 transition-colors"
+  >
+    Unban User
+  </button>
+) : (
+  <button
+    type="button"
+    onClick={() => {
+      banUser(user.id)
+      toast.success(`${user.name} banned`)
+    }}
+    className="text-xs font-medium text-red-400 hover:text-red-300 transition-colors"
+  >
+    Ban User
+  </button>
+)}
 
-            {user.status === "suspended" ? (
-              <button
-                type="button"
-                onClick={() => activateUser(user.id)}
-                className="text-xs font-medium text-green-400 hover:text-green-300 transition-colors"
-              >
-                Remove Suspension
-              </button>
-            ) : (
-              user.status !== "banned" && (
-                <button
-                  type="button"
-                  onClick={() => suspendUser(user.id)}
-                  className="text-xs font-medium text-yellow-400 hover:text-yellow-300 transition-colors"
-                >
-                  Suspend User
-                </button>
-              )
-            )}
+{user.status === "suspended" ? (
+  <button
+    type="button"
+    onClick={() => {
+      activateUser(user.id)
+      toast.success(`${user.name} reactivated`)
+    }}
+    className="text-xs font-medium text-green-400 hover:text-green-300 transition-colors"
+  >
+    Remove Suspension
+  </button>
+) : (
+  user.status !== "banned" && (
+    <button
+      type="button"
+      onClick={() => {
+        suspendUser(user.id)
+        toast.success(`${user.name} suspended`)
+      }}
+      className="text-xs font-medium text-yellow-400 hover:text-yellow-300 transition-colors"
+    >
+      Suspend User
+    </button>
+  )
+)}
           </div>
         )}
       </div>

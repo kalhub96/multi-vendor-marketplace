@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import { useOrders } from "@/lib/orders-context"
 import { OrderStatus } from "@/types"
+import toast from "react-hot-toast"
 
 const statusStyles: Record<OrderStatus, string> = {
   pending: "bg-yellow-900 text-yellow-300",
@@ -75,6 +76,7 @@ export default function VendorOrdersPage() {
     const next = nextStatusMap[currentStatus]
     if (!next) return
     updateOrderStatus(orderId, next.next)
+    toast.success(`Order marked as ${next.next}`)
   }
 
   return (

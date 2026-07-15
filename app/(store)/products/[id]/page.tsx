@@ -160,21 +160,22 @@ useEffect(() => {
 
   // SUBMIT RATING
   const handleSubmitRating = () => {
-    if (!currentUser || selectedStars === 0) return
+  if (!currentUser || selectedStars === 0) return
 
-    addRating({
-      productId: product.id,
-      vendorId: product.vendorId,
-      buyerId: currentUser.id,
-      buyerName: currentUser.name,
-      stars: selectedStars,
-      comment,
-    })
+  addRating({
+    productId: product.id,
+    vendorId: product.vendorId,
+    buyerId: currentUser.id,
+    buyerName: currentUser.name,
+    stars: selectedStars,
+    comment,
+  })
 
-    setRatingSubmitted(true)
-    setComment("")
-    setSelectedStars(0)
-  }
+  setRatingSubmitted(true)
+  setComment("")
+  setSelectedStars(0)
+  toast.success("Thank you for your review!")
+}
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">

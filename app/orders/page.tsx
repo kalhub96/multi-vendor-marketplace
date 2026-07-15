@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import { useOrders } from "@/lib/orders-context"
 import { OrderStatus } from "@/types"
+import toast from "react-hot-toast"
 
 const statusStyles: Record<OrderStatus, string> = {
   pending: "bg-yellow-900 text-yellow-300",
@@ -53,6 +54,7 @@ export default function MyOrdersPage() {
   const handleConfirmCancel = (orderId: string) => {
     cancelOrder(orderId)
     setConfirmingCancel(null)
+    toast.success("Order cancelled")
   }
 
   return (

@@ -8,6 +8,7 @@ import { useUsers } from "@/lib/users-context"
 import { vendors } from "@/data/users"
 import { orders } from "@/data/orders"
 import { useRatings } from "@/lib/ratings-context"
+import toast from "react-hot-toast"
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -71,6 +72,7 @@ export default function ProfilePage() {
 
     updateUser({ name: name.trim(), email: email.trim() })
     setSaved(true)
+    toast.success("Profile updated!")
     setTimeout(() => setSaved(false), 2500)
   }
 

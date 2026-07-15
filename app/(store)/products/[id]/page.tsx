@@ -7,6 +7,7 @@ import { vendors } from "@/data/users"
 import { useProducts } from "@/lib/products-context"
 import { useOrders } from "@/lib/orders-context"
 import { useCart } from "@/lib/cart-context"
+import toast from "react-hot-toast"
 import { useRatings } from "@/lib/ratings-context"
 import { useUsers } from "@/lib/users-context"
 import { User } from "@/types"
@@ -153,6 +154,7 @@ useEffect(() => {
   const handleAddToCart = () => {
     addToCart(product, quantity)
     setAdded(true)
+    toast.success(`${product.name} added to cart!`)
     setTimeout(() => setAdded(false), 2000)
   }
 

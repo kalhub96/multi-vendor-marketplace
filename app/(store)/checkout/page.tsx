@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useCart } from "@/lib/cart-context"
 import { useOrders } from "@/lib/orders-context"
 import { PaymentMethod } from "@/types"
+import toast from "react-hot-toast"
 
 const paymentOptions: { value: PaymentMethod; label: string; hint: string }[] = [
   { value: "telebirr", label: "Telebirr", hint: "Pay instantly with Telebirr wallet" },
@@ -90,6 +91,7 @@ export default function CheckoutPage() {
       })
 
       clearCart()
+      toast.success("Order placed successfuly!")
       router.push("/orders?success=true")
     }, 1800)
   }

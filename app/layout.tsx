@@ -9,6 +9,7 @@ import { ProductsProvider } from "@/lib/products-context"
 import { UsersProvider } from "@/lib/users-context"
 import { OrdersProvider } from "@/lib/orders-context"
 import { VendorsProvider } from "@/lib/vendors-context"
+import { Toaster } from "react-hot-toast"
 
 const geistSans = Geist({
   variable: "--font-geist-sans", 
@@ -33,6 +34,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}>
+        <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "#1f2937",
+            color: "#fff",
+            border: "1px solid #374151",
+          },
+          success: {
+            iconTheme: {
+              primary: "#4ade80",
+              secondary: "#1f2937",
+            },
+          },
+        }}/>
         <AuthProvider>
   <UsersProvider>
     <VendorsProvider>

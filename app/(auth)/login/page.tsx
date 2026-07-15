@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useUsers } from "@/lib/users-context"
 import { useAuth } from "@/lib/auth-context"
+import toast from "react-hot-toast"
 
 export default function LoginPage() {
     const router = useRouter()
@@ -45,6 +46,7 @@ export default function LoginPage() {
             }
 
             login(user)
+            toast.success(`Welcome back, ${user.name}!`)
 
         if (user.role === "admin"){
             router.push("/admin/dashboard")

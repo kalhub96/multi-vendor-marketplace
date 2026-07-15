@@ -5,15 +5,23 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { User } from "@/types"
 import { useVendors } from "@/lib/vendors-context"
-import { orders } from "@/data/orders"
 import { useProducts } from "@/lib/products-context"
 import { useAuth } from "@/lib/auth-context"
+import { useRatings } from "@/lib/ratings-context"
+import { useOrders } from "@/lib/orders-context"
+import { Skeleton } from "@/components/skeleton"
+import { AnimatedNumber } from "@/components/animated-number"
+import { motion } from "framer-motion"
+
 
 export default function VendorDashboredPage() {
     const router = useRouter()
     const { currentUser, loaded } = useAuth()
     const { products } = useProducts()
     const { getVendorByUserId } = useVendors()
+    const { getVendorAverage, ratings } = useRatings()
+    const { orders } = useOrders()
+    
 
     useEffect(() => {
         console.log("VENDOR DASHBOARD CHECK:", { loaded, currentUser })
@@ -30,12 +38,29 @@ export default function VendorDashboredPage() {
     }, [currentUser, loaded, router])
 
     if (!loaded || !currentUser) {
-        return(
-            <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
-                <p className="text-gray-400">Loading dashboard...</p>
-            </main>
-        )
-    }
+  return (
+    <main className="min-h-screen bg-gray-950 text-white">
+      <section className="bg-gray-900 py-10 px-8">
+        <div className="max-w-6xl mx-auto flex flex-col gap-2">
+          <Skeleton className="h-3 w-32" />
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-48" />
+        </div>
+      </section>
+      <section className="max-w-6xl mx-auto px-8 py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-gray-900 rounded-xl p-6 flex flex-col gap-3">
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-8 w-16" />
+            </div>
+          ))}
+        </div>
+        <Skeleton className="h-40 w-full rounded-xl" />
+      </section>
+    </main>
+  )
+}
 
     // find the vendor's store info
     const vendorStore = currentUser ? getVendorByUserId(currentUser.id) : undefined
@@ -90,28 +115,58 @@ export default function VendorDashboredPage() {
         <section className="max-w-6xl mx-auto px-8 py-10">
 
             {/* STATS GRID */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                <div className="bg-gray-900 rounded-xl p-6">
-                    <p className="text-gray-400 text-sm mb-2">Total Products</p>
-                    <p className="text-3xl font-bold text-green-400">
-                        {vendorProducts.length}
-                    </p>
-                </div>
-                <div className="bg-gray-900 rounded-xl p-6">
-                    <p className="text-gray-400 text-sm mb-2">Total Orders</p>
-                    <p className="text-3xl font-bold text-green-400">{orders.length}</p>
-                </div>
-                <div className="bg-gray-900 rounded-xl p-6">
-                    <p className="text-gray-400 text-sm mb-2">Total Revenue</p>
-                    <p className="text-3xl font-bold text-green-400">
-                        ETB {totalRevenue.toFixed(0)}
-                    </p>
-                </div>
-                <div className="bg-gray-900 rounded-xl p-6">
-                    <p className="text-gray-400 text-sm mb-2">Store Rating</p>
-                    <p className="text-3xl font-bold text-green-400">4.8 ★</p>
-                </div>
-            </div>
+            {/* STATS GRID */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0 }}
+      className="bg-gray-900 rounded-xl p-6"
+    >
+        <p className="text-gray-400 text-sm mb-2">Total Products</p>
+        <p className="text-3xl font-bold text-green-400">
+            <AnimatedNumber value={vendorProducts.length} />
+        </p>
+    </motion.div>
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.1 }}
+      className="bg-gray-900 rounded-xl p-6"
+    >
+        <p className="text-gray-400 text-sm mb-2">Total Orders</p>
+        <p className="text-3xl font-bold text-green-400">
+          <AnimatedNumber value={orders.length} />
+        </p>
+    </motion.div>
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.2 }}
+      className="bg-gray-900 rounded-xl p-6"
+    >
+        <p className="text-gray-400 text-sm mb-2">Total Revenue</p>
+        <p className="text-3xl font-bold text-green-400">
+            <AnimatedNumber value={totalRevenue} prefix="ETB " />
+        </p>
+    </motion.div>
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.3 }}
+      className="bg-gray-900 rounded-xl p-6"
+    >
+        <p className="text-gray-400 text-sm mb-2">Store Rating</p>
+        <p className="text-3xl font-bold text-green-400">
+            {getVendorAverage("vendor_1") > 0
+              ? <><AnimatedNumber value={getVendorAverage("vendor_1")} decimals={1} /> ★</>
+              : "No ratings yet"}
+        </p>
+        <p className="text-gray-500 text-xs mt-1">
+            {ratings.filter((r) => r.vendorId === "vendor_1").length} reviews
+        </p>
+    </motion.div>
+</div>
 
             <div className="flex flex-row items-center gap-4 mb-10 flex-wrap">
                 <Link

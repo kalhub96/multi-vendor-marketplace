@@ -12,6 +12,8 @@ import { useRatings } from "@/lib/ratings-context"
 import { useUsers } from "@/lib/users-context"
 import { User } from "@/types"
 import StarRating from "@/components/star-rating"
+import { Skeleton } from "@/components/skeleton"
+import { motion } from "framer-motion"
 
 export default function ProductDetailPage({
   params,
@@ -32,13 +34,13 @@ export default function ProductDetailPage({
   const [ratingSubmitted, setRatingSubmitted] = useState(false)
 
   const { addToCart } = useCart()
-  const { products } = useProducts()
+  const { products, loaded: productsLoaded } = useProducts()
   const { getUserById } = useUsers()
   const { orders } = useOrders()
-  
+
   const liveUser = currentUser ? getUserById(currentUser.id) : undefined
   const isSuspended = liveUser?.status === "suspended"
-  
+
   const {
     getProductRatings,
     getProductAverage,
@@ -52,35 +54,35 @@ export default function ProductDetailPage({
     if (stored) setCurrentUser(JSON.parse(stored))
   }, [])
 
-// FETCH ML RECOMMENDATIONS FROM PYTHON API
-useEffect(() => {
-  if (!currentUser) {
-    setMlLoading(false)
-    return
-  }
-
-  const fetchMlRecommendations = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/recommendations/${currentUser.id}`
-      )
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch recommendations")
-      }
-
-      const data = await response.json()
-      setMlRecommendations(data.recommended_product_ids)
-    } catch (error) {
-      console.log("ML server not reachable — skipping ML recommendations", error)
-      setMlRecommendations([])
-    } finally {
+  // FETCH ML RECOMMENDATIONS FROM PYTHON API
+  useEffect(() => {
+    if (!currentUser) {
       setMlLoading(false)
+      return
     }
-  }
 
-  fetchMlRecommendations()
-}, [currentUser])
+    const fetchMlRecommendations = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/recommendations/${currentUser.id}`
+        )
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch recommendations")
+        }
+
+        const data = await response.json()
+        setMlRecommendations(data.recommended_product_ids)
+      } catch (error) {
+        console.log("ML server not reachable — skipping ML recommendations", error)
+        setMlRecommendations([])
+      } finally {
+        setMlLoading(false)
+      }
+    }
+
+    fetchMlRecommendations()
+  }, [currentUser])
 
   const product = products.find((p) => p.id === id)
   const vendor = vendors.find((v) => v.id === product?.vendorId)
@@ -114,6 +116,29 @@ useEffect(() => {
   const productRatings = getProductRatings(id)
   const averageRating = getProductAverage(id)
 
+  if (!productsLoaded) {
+    return (
+      <main className="min-h-screen bg-gray-950 text-white">
+        <div className="max-w-6xl mx-auto px-8 py-6">
+          <Skeleton className="h-4 w-32" />
+        </div>
+        <section className="max-w-6xl mx-auto px-8 pb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <Skeleton className="h-96 w-full rounded-2xl" />
+            <div className="flex flex-col gap-4">
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-10 w-40" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-12 w-full rounded-full mt-4" />
+            </div>
+          </div>
+        </section>
+      </main>
+    )
+  }
+
   if (!product) {
     return (
       <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
@@ -132,18 +157,18 @@ useEffect(() => {
     ? orders.some(
         (order) =>
           order.buyerId === currentUser.id &&
-          order.status !== "cancelled" && 
+          order.status !== "cancelled" &&
           order.items.some((item) => item.product.id === product.id)
       )
     : false
 
-    const hasCancelledOrder = currentUser
-    ?orders.some(
+  const hasCancelledOrder = currentUser
+    ? orders.some(
         (order) =>
-            order.buyerId === currentUser.id &&
-            order.status === "cancelled" &&
-            order.items.some((item) => item.product.id === product.id)
-    )
+          order.buyerId === currentUser.id &&
+          order.status === "cancelled" &&
+          order.items.some((item) => item.product.id === product.id)
+      )
     : false
 
   const alreadyRated = currentUser
@@ -160,27 +185,26 @@ useEffect(() => {
 
   // SUBMIT RATING
   const handleSubmitRating = () => {
-  if (!currentUser || selectedStars === 0) return
+    if (!currentUser || selectedStars === 0) return
 
-  addRating({
-    productId: product.id,
-    vendorId: product.vendorId,
-    buyerId: currentUser.id,
-    buyerName: currentUser.name,
-    stars: selectedStars,
-    comment,
-  })
+    addRating({
+      productId: product.id,
+      vendorId: product.vendorId,
+      buyerId: currentUser.id,
+      buyerName: currentUser.name,
+      stars: selectedStars,
+      comment,
+    })
 
-  setRatingSubmitted(true)
-  setComment("")
-  setSelectedStars(0)
-  toast.success("Thank you for your review!")
-}
+    setRatingSubmitted(true)
+    setComment("")
+    setSelectedStars(0)
+    toast.success("Thank you for your review!")
+  }
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
 
-      
       <div className="max-w-6xl mx-auto px-8 py-6">
         <Link
           href="/products"
@@ -190,30 +214,38 @@ useEffect(() => {
         </Link>
       </div>
 
-     
       <section className="max-w-6xl mx-auto px-8 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
 
-          
-          <div className="bg-gray-800 rounded-2xl h-96 flex items-center justify-center overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-gray-800 rounded-2xl h-96 flex items-center justify-center overflow-hidden"
+          >
             {product.image && product.image.startsWith("data:") ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-full object-cover"/>
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
             ) : (
-               <span className="text-gray-600">No Image Yet</span>
-               )}
-          </div>
+              <span className="text-gray-600">No Image Yet</span>
+            )}
+          </motion.div>
 
-          <div className="flex flex-col justify-center">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="flex flex-col justify-center"
+          >
             <span className="text-green-400 text-sm uppercase tracking-wide mb-2">
               {product.category}
             </span>
             <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
 
-            
             <div className="mb-4">
               <StarRating
                 stars={averageRating}
@@ -246,7 +278,6 @@ useEffect(() => {
               </p>
             )}
 
-            
             <div className="flex items-center gap-4 mb-6">
               <span className="text-gray-400 text-sm">Quantity:</span>
               <div className="flex items-center gap-3 bg-gray-800 rounded-full px-4 py-2">
@@ -257,9 +288,15 @@ useEffect(() => {
                 >
                   −
                 </button>
-                <span className="w-6 text-center font-semibold">
+                <motion.span
+                  key={quantity}
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="w-6 text-center font-semibold inline-block"
+                >
                   {quantity}
-                </span>
+                </motion.span>
                 <button
                   type="button"
                   onClick={() =>
@@ -272,11 +309,13 @@ useEffect(() => {
               </div>
             </div>
 
-            
-            <button
+            <motion.button
               type="button"
               onClick={handleAddToCart}
               disabled={product.stock === 0}
+              whileTap={{ scale: 0.97 }}
+              animate={added ? { scale: [1, 1.03, 1] } : {}}
+              transition={{ duration: 0.3 }}
               className={`w-full py-4 rounded-full font-bold text-lg transition-all ${
                 added
                   ? "bg-gray-600 text-white"
@@ -284,8 +323,8 @@ useEffect(() => {
               }`}
             >
               {added ? "✓ Added to Cart!" : "Add to Cart"}
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         </div>
 
         <div className="mt-16">
@@ -301,7 +340,6 @@ useEffect(() => {
           {/* RATING FORM */}
           <div className="bg-gray-900 rounded-xl p-6 mb-8">
 
-            
             {!currentUser && (
               <p className="text-gray-400">
                 <Link href="/login" className="text-green-400 hover:underline">
@@ -311,34 +349,31 @@ useEffect(() => {
               </p>
             )}
 
-           
             {currentUser && currentUser.role !== "buyer" && (
               <p className="text-gray-400">
                 Only buyers can leave reviews
               </p>
             )}
 
-            
             {/* SUSPENDED BUYER */}
-{currentUser &&
-  currentUser.role === "buyer" &&
-  isSuspended && (
-    <p className="text-yellow-400">
-      Your account is restricted and cannot leave reviews right now.
-    </p>
-  )}
+            {currentUser &&
+              currentUser.role === "buyer" &&
+              isSuspended && (
+                <p className="text-yellow-400">
+                  Your account is restricted and cannot leave reviews right now.
+                </p>
+              )}
 
-{/* BUYER BUT HASN'T PURCHASED */}
-{currentUser &&
-  currentUser.role === "buyer" &&
-  !isSuspended &&
-  !hasPurchased && (
-    <p className="text-gray-400">
-      Purchase this product to leave a review
-    </p>
-  )}
+            {/* BUYER BUT HASN'T PURCHASED */}
+            {currentUser &&
+              currentUser.role === "buyer" &&
+              !isSuspended &&
+              !hasPurchased && (
+                <p className="text-gray-400">
+                  Purchase this product to leave a review
+                </p>
+              )}
 
-            
             {currentUser &&
               currentUser.role === "buyer" &&
               hasPurchased &&
@@ -350,15 +385,14 @@ useEffect(() => {
               )}
 
             {currentUser &&
-                currentUser.role === "buyer" &&
-                hasCancelledOrder &&
-                !hasPurchased && (
-                    <p className="text-yellow-400">
-                        You cancelled this order. Complete a purchase to leave a review.
-                    </p>
-            )}
+              currentUser.role === "buyer" &&
+              hasCancelledOrder &&
+              !hasPurchased && (
+                <p className="text-yellow-400">
+                  You cancelled this order. Complete a purchase to leave a review.
+                </p>
+              )}
 
-             
             {currentUser &&
               currentUser.role === "buyer" &&
               !isSuspended &&
@@ -368,7 +402,6 @@ useEffect(() => {
                 <div>
                   <h3 className="font-semibold mb-4">Leave a Review</h3>
 
-                  
                   <div className="flex items-center gap-1 mb-4">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
@@ -451,54 +484,54 @@ useEffect(() => {
         </div>
 
         {/* ML-POWERED RECOMMENDATIONS */}
-{currentUser && !mlLoading && mlRecommendations.length > 0 && (
-  <div className="mt-16">
-    <div className="flex items-center gap-2 mb-8">
-      <h2 className="text-2xl font-bold">Recommended For You</h2>
-      <span className="text-xs bg-purple-900 text-purple-300 px-2 py-1 rounded-full font-medium">
-        AI Powered
-      </span>
-    </div>
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {mlRecommendations.map((productId) => {
-        const mlProduct = products.find((p) => p.id === productId)
-        if (!mlProduct) return null
-
-        return (
-          <Link
-            key={mlProduct.id}
-            href={`/products/${mlProduct.id}`}
-            className="bg-gray-900 rounded-xl overflow-hidden hover:ring-2 hover:ring-purple-400 transition-all"
-          >
-            <div className="bg-gray-800 h-40 flex items-center justify-center overflow-hidden">
-              {mlProduct.image && mlProduct.image.startsWith("data:") ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={mlProduct.image}
-                  alt={mlProduct.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span className="text-gray-600 text-sm">No Image Yet</span>
-              )}
-            </div>
-            <div className="p-4">
-              <span className="text-xs text-purple-400 uppercase tracking-wide">
-                {mlProduct.category}
+        {currentUser && !mlLoading && mlRecommendations.length > 0 && (
+          <div className="mt-16">
+            <div className="flex items-center gap-2 mb-8">
+              <h2 className="text-2xl font-bold">Recommended For You</h2>
+              <span className="text-xs bg-purple-900 text-purple-300 px-2 py-1 rounded-full font-medium">
+                AI Powered
               </span>
-              <h3 className="font-semibold mt-1 mb-1 line-clamp-1">
-                {mlProduct.name}
-              </h3>
-              <p className="text-green-400 font-bold">
-                ETB {(mlProduct.price * 160).toFixed(2)}
-              </p>
             </div>
-          </Link>
-        )
-      })}
-    </div>
-  </div>
-)}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {mlRecommendations.map((productId) => {
+                const mlProduct = products.find((p) => p.id === productId)
+                if (!mlProduct) return null
+
+                return (
+                  <Link
+                    key={mlProduct.id}
+                    href={`/products/${mlProduct.id}`}
+                    className="bg-gray-900 rounded-xl overflow-hidden hover:ring-2 hover:ring-purple-400 transition-all"
+                  >
+                    <div className="bg-gray-800 h-40 flex items-center justify-center overflow-hidden">
+                      {mlProduct.image && mlProduct.image.startsWith("data:") ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={mlProduct.image}
+                          alt={mlProduct.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-gray-600 text-sm">No Image Yet</span>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <span className="text-xs text-purple-400 uppercase tracking-wide">
+                        {mlProduct.category}
+                      </span>
+                      <h3 className="font-semibold mt-1 mb-1 line-clamp-1">
+                        {mlProduct.name}
+                      </h3>
+                      <p className="text-green-400 font-bold">
+                        ETB {(mlProduct.price * 160).toFixed(2)}
+                      </p>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* RECOMMENDATIONS */}
         {recommendations.length > 0 && (
@@ -507,16 +540,19 @@ useEffect(() => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {recommendations.map((rec) => (
                 <Link
-                key={rec.id}
-                href={`/products/${rec.id}`}
-                className="bg-gray-900 rounded-xl overflow-hidden hover:ring-2 hover:ring-green-400 transition-all">
+                  key={rec.id}
+                  href={`/products/${rec.id}`}
+                  className="bg-gray-900 rounded-xl overflow-hidden hover:ring-2 hover:ring-green-400 transition-all"
+                >
                   <div className="bg-gray-800 h-40 flex items-center justify-center overflow-hidden">
-                    {rec.image && rec.image.startsWith("data:") ?(
+                    {rec.image && rec.image.startsWith("data:") ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
-                      src={rec.image}
-                       alt={rec.name}
-                      className="w-full h-full object-cover"/>
-                    ): (
+                        src={rec.image}
+                        alt={rec.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
                       <span className="text-gray-600 text-sm">No Image Yet</span>
                     )}
                   </div>
@@ -528,7 +564,7 @@ useEffect(() => {
                       {rec.name}
                     </h3>
                     <p className="text-green-400 font-bold">
-                      ETB {(rec.price*160).toFixed(2)}
+                      ETB {(rec.price * 160).toFixed(2)}
                     </p>
                   </div>
                 </Link>

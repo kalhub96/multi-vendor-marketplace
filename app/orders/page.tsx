@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useOrders } from "@/lib/orders-context"
 import { OrderStatus } from "@/types"
 import toast from "react-hot-toast"
+import { Skeleton } from "@/components/skeleton"
 
 const statusStyles: Record<OrderStatus, string> = {
   pending: "bg-yellow-900 text-yellow-300",
@@ -33,12 +34,20 @@ export default function MyOrdersPage() {
   }, [currentUser, loaded, router])
 
   if (!loaded || !currentUser) {
-    return (
-      <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
-        <p className="text-gray-400">Loading orders...</p>
-      </main>
-    )
-  }
+  return (
+    <main className="min-h-screen bg-gray-950 text-white">
+      <section className="bg-gray-900 py-10 px-8 text-center">
+        <Skeleton className="h-8 w-48 mx-auto mb-2" />
+        <Skeleton className="h-4 w-64 mx-auto" />
+      </section>
+      <section className="max-w-4xl mx-auto px-8 py-12 flex flex-col gap-6">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-40 w-full rounded-xl" />
+        ))}
+      </section>
+    </main>
+  )
+}
 
   const myOrders = getOrdersByBuyer(currentUser.id).sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()

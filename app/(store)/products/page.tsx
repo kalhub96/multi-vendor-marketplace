@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { ProductCategory } from "@/types"
 import { useProducts } from "@/lib/products-context"
+import { Skeleton } from "@/components/skeleton"
 
 const categories: { label: string; value: ProductCategory | "all" }[] = [
   { label: "All", value: "all" },
@@ -19,7 +20,7 @@ const categories: { label: string; value: ProductCategory | "all" }[] = [
 export default function ProductsPage() {
   const searchParams = useSearchParams()
   const searchQuery = searchParams.get("search") || ""
-  const { products } = useProducts()
+  const { products, loaded: productsLoaded } = useProducts()
 
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory | "all">("all")
 
@@ -93,7 +94,24 @@ export default function ProductsPage() {
 
       {/* PRODUCTS GRID */}
       <section className="max-w-6xl mx-auto px-8 pb-16">
-        {filteredProducts.length === 0 ? (
+        {!productsLoaded ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="bg-gray-900 rounded-xl overflow-hidden">
+          <Skeleton className="h-48 w-full rounded-none" />
+          <div className="p-4 flex flex-col gap-2">
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3 w-full" />
+            <div className="flex items-center justify-between mt-2">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-7 w-16 rounded-full" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  ) :filteredProducts.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-5xl mb-4">🔍</p>
             <p className="text-gray-400 mb-2">

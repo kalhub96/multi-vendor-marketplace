@@ -49,25 +49,28 @@ export default function CartPage() {
               {cartItems.map((item) => (
                 <div
                   key={item.product.id}
-                  className="bg-gray-900 rounded-xl p-6 flex items-center gap-6"
+                  className="bg-gray-900 rounded-xl p-4 sm:p-6 flex flex-col gap-4"
                 >
-                  <div className="bg-gray-800 w-24 h-24 rounded-lg flex items-center justify-center shrink-0">
-                    <span className="text-gray-600 text-xs">No Image</span>
+                  <div className="flex items-center gap-4">
+                    <div className="bg-gray-800 w-20 h-20 sm:w-24 sm:h-24 rounded-lg flex items-center justify-center shrink-0">
+                      <span className="text-gray-600 text-xs">No Image</span>
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <span className="text-green-400 text-xs uppercase tracking-wide">
+                        {item.product.category}
+                      </span>
+                      <h3 className="font-semibold text-base sm:text-lg mt-1 truncate">
+                        {item.product.name}
+                      </h3>
+                      <p className="text-gray-400 font-bold mt-1">
+                        ETB {(item.product.price * 160).toFixed(2)}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="flex-1">
-                    <span className="text-green-400 text-xs uppercase tracking-wide">
-                      {item.product.category}
-                    </span>
-                    <h3 className="font-semibold text-lg mt-1">
-                      {item.product.name}
-                    </h3>
-                    <p className="text-green-400 font-bold mt-1">
-                      ETB {(item.product.price * 160).toFixed(2)}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3 bg-gray-800 rounded-full px-4 py-2">
+                  <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 bg-gray-800 rounded-full px-4 py-2 w-fit">
                     <button
                       type="button"
                       onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
@@ -87,7 +90,7 @@ export default function CartPage() {
                     </button>
                   </div>
 
-                  <div className="text-right w-32">
+                  <div className="text-right">
                     <p className="text-white font-bold">
                       ETB {(item.product.price * 160 * item.quantity).toFixed(2)}
                     </p>
@@ -96,10 +99,11 @@ export default function CartPage() {
                       onClick={() => {removeFromCart(item.product.id)
                         toast.success("Item removed from cart")
                       }}
-                      className="text-red-400 text-sm hover:text-red-300 mt-2 transition-colors"
+                      className="text-red-400 text-sm hover:text-red-300 mt-1 transition-colors"
                     >
                       Remove
                     </button>
+                  </div>
                   </div>
                 </div>
               ))}

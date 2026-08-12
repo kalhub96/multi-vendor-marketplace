@@ -9,7 +9,7 @@ export default function Home() {
 
   return (
     <main>
-      <section className="bg-emerald-500 text-gray-900 py-20 px-8 text-center overflow-hidden relative">
+      <section className="bg-emerald-500 text-gray-900 py-20 px-8 text-center overflow-hidden relative rounded-b-[3rem]">
         <motion.div
         className="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full"
         animate={{y: [0,20,0]}}

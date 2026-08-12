@@ -362,96 +362,141 @@ export default function AdminDashboardPage() {
         )}
 
         {/* VENDORS TAB */}
-        {activeTab === "vendors" && (
-          <motion.div
-            key="vendors"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="bg-gray-900 rounded-xl overflow-hidden"
-          >
-            <div className="grid grid-cols-3 gap-4 px-6 py-4 bg-gray-800 text-gray-400 text-sm font-medium">
-              <span>Store Name</span>
-              <span>Owner</span>
-              <span>Products</span>
+{activeTab === "vendors" && (
+  <motion.div
+    key="vendors"
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+    className="bg-gray-900 rounded-xl overflow-hidden"
+  >
+    {/* DESKTOP HEADER — hidden on mobile */}
+    <div className="hidden sm:grid grid-cols-3 gap-4 px-6 py-4 bg-gray-800 text-gray-400 text-sm font-medium">
+      <span>Store Name</span>
+      <span>Owner</span>
+      <span>Products</span>
+    </div>
+
+    {vendors.map((vendor) => {
+      const owner = users.find((u) => u.id === vendor.userId)
+      const vendorProductCount = allProducts.filter(
+        (p) => p.vendorId === vendor.id
+      ).length
+      return (
+        <div key={vendor.id}>
+
+          {/* DESKTOP ROW */}
+          <div className="hidden sm:grid grid-cols-3 gap-4 px-6 py-4 border-t border-gray-800 items-center hover:bg-gray-800/50 transition-colors">
+            <div>
+              <p className="font-medium">{vendor.storeName}</p>
+              <p className="text-gray-400 text-sm line-clamp-1">
+                {vendor.description}
+              </p>
             </div>
-            {vendors.map((vendor) => {
-              const owner = users.find((u) => u.id === vendor.userId)
-              const vendorProductCount = allProducts.filter(
-                (p) => p.vendorId === vendor.id
-              ).length
-              return (
-                <div
-                  key={vendor.id}
-                  className="grid grid-cols-3 gap-4 px-6 py-4 border-t border-gray-800 items-center hover:bg-gray-800/50 transition-colors"
-                >
-                  <div>
-                    <p className="font-medium">{vendor.storeName}</p>
-                    <p className="text-gray-400 text-sm line-clamp-1">
-                      {vendor.description}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium">{owner?.name}</p>
-                    <p className="text-gray-400 text-sm">{owner?.email}</p>
-                  </div>
-                  <span className="text-green-400 font-bold">
-                    {vendorProductCount} products
-                  </span>
-                </div>
-              )
-            })}
-          </motion.div>
-        )}
+            <div>
+              <p className="font-medium">{owner?.name}</p>
+              <p className="text-gray-400 text-sm">{owner?.email}</p>
+            </div>
+            <span className="text-green-400 font-bold">
+              {vendorProductCount} products
+            </span>
+          </div>
+
+          {/* MOBILE CARD */}
+          <div className="sm:hidden border-t border-gray-800 p-4 flex flex-col gap-2">
+            <p className="font-medium">{vendor.storeName}</p>
+            <p className="text-gray-400 text-sm">{vendor.description}</p>
+            <div className="flex items-center justify-between text-sm pt-2 border-t border-gray-800 mt-1">
+              <div>
+                <p className="text-white">{owner?.name}</p>
+                <p className="text-gray-500 text-xs">{owner?.email}</p>
+              </div>
+              <span className="text-green-400 font-bold">
+                {vendorProductCount} products
+              </span>
+            </div>
+          </div>
+
+        </div>
+      )
+    })}
+  </motion.div>
+)}
 
         {/* PRODUCTS TAB */}
-        {activeTab === "products" && (
-          <motion.div
-            key="products"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="bg-gray-900 rounded-xl overflow-hidden"
-          >
-            <div className="grid grid-cols-5 gap-4 px-6 py-4 bg-gray-800 text-gray-400 text-sm font-medium">
-              <span className="col-span-2">Product</span>
-              <span>Category</span>
-              <span>Price</span>
-              <span>Stock</span>
-            </div>
-            {allProducts.map((product) => (
-              <div
-                key={product.id}
-                className="grid grid-cols-5 gap-4 px-6 py-4 border-t border-gray-800 items-center hover:bg-gray-800/50 transition-colors"
-              >
-                <div className="col-span-2">
-                  <p className="font-medium">{product.name}</p>
-                  <p className="text-gray-400 text-sm line-clamp-1">
-                    {product.description}
-                  </p>
-                </div>
-                <span className="text-green-400 text-sm capitalize">
-                  {product.category}
-                </span>
-                <span className="font-medium">
-                  ETB {(product.price * 160).toFixed(0)}
-                </span>
-                <div className="flex items-center justify-between">
-                  <span className={product.stock > 0 ? "text-white" : "text-red-400"}>
-                    {product.stock}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteProduct(product.id)}
-                    className="text-red-400 hover:text-red-300 text-sm transition-colors"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        )}
+{activeTab === "products" && (
+  <motion.div
+    key="products"
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+    className="bg-gray-900 rounded-xl overflow-hidden"
+  >
+    {/* DESKTOP HEADER */}
+    <div className="hidden sm:grid grid-cols-5 gap-4 px-6 py-4 bg-gray-800 text-gray-400 text-sm font-medium">
+      <span className="col-span-2">Product</span>
+      <span>Category</span>
+      <span>Price</span>
+      <span>Stock</span>
+    </div>
+
+    {allProducts.map((product) => (
+      <div key={product.id}>
+
+        {/* DESKTOP ROW */}
+        <div className="hidden sm:grid grid-cols-5 gap-4 px-6 py-4 border-t border-gray-800 items-center hover:bg-gray-800/50 transition-colors">
+          <div className="col-span-2">
+            <p className="font-medium">{product.name}</p>
+            <p className="text-gray-400 text-sm line-clamp-1">
+              {product.description}
+            </p>
+          </div>
+          <span className="text-green-400 text-sm capitalize">
+            {product.category}
+          </span>
+          <span className="font-medium">
+            ETB {(product.price * 160).toFixed(0)}
+          </span>
+          <div className="flex items-center justify-between">
+            <span className={product.stock > 0 ? "text-white" : "text-red-400"}>
+              {product.stock}
+            </span>
+            <button
+              type="button"
+              onClick={() => handleDeleteProduct(product.id)}
+              className="text-red-400 hover:text-red-300 text-sm transition-colors"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+
+        {/* MOBILE CARD */}
+        <div className="sm:hidden border-t border-gray-800 p-4 flex flex-col gap-2">
+          <p className="font-medium">{product.name}</p>
+          <p className="text-gray-400 text-sm line-clamp-1">{product.description}</p>
+          <div className="flex items-center justify-between text-sm pt-1">
+            <span className="text-green-400 capitalize">{product.category}</span>
+            <span className="font-medium">ETB {(product.price * 160).toFixed(0)}</span>
+          </div>
+          <div className="flex items-center justify-between text-sm">
+            <span className={product.stock > 0 ? "text-white" : "text-red-400"}>
+              Stock: {product.stock}
+            </span>
+            <button
+              type="button"
+              onClick={() => handleDeleteProduct(product.id)}
+              className="text-red-400 hover:text-red-300 text-sm transition-colors"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+
+      </div>
+    ))}
+  </motion.div>
+)}
 
       </section>
     </main>

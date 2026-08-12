@@ -91,7 +91,7 @@ export default function CheckoutPage() {
       })
 
       clearCart()
-      toast.success("Order placed successfuly!")
+      toast.success("Order placed successfully!")
       router.push("/orders?success=true")
     }, 1800)
   }
@@ -100,15 +100,15 @@ export default function CheckoutPage() {
     <main className="min-h-screen bg-gray-950 text-white">
 
       {/* HEADER */}
-      <section className="bg-gray-900 py-10 px-8 text-center">
-        <h1 className="text-3xl font-bold">Checkout</h1>
+      <section className="bg-gray-900 py-8 sm:py-10 px-4 sm:px-8 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold">Checkout</h1>
         <p className="text-gray-400 mt-2">
           Complete your order in a few steps
         </p>
       </section>
 
-      <section className="max-w-5xl mx-auto px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <section className="max-w-5xl mx-auto px-4 sm:px-8 py-8 sm:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
 
           {/* LEFT — FORM */}
           <div className="lg:col-span-2 flex flex-col gap-6">
@@ -191,7 +191,7 @@ export default function CheckoutPage() {
                       name="payment"
                       checked={paymentMethod === option.value}
                       onChange={() => setPaymentMethod(option.value)}
-                      className="w-4 h-4 accent-green-400"
+                      className="w-4 h-4 accent-green-400 shrink-0"
                     />
                     <div>
                       <p className="font-medium">{option.label}</p>
@@ -206,17 +206,17 @@ export default function CheckoutPage() {
 
           {/* RIGHT — ORDER SUMMARY */}
           <div className="lg:col-span-1">
-            <div className="bg-gray-900 rounded-xl p-6 sticky top-6">
+            <div className="bg-gray-900 rounded-xl p-6 lg:sticky lg:top-6">
               <h2 className="text-lg font-bold mb-4">Order Summary</h2>
 
               <div className="flex flex-col gap-3 mb-4 max-h-64 overflow-y-auto">
                 {cartItems.map((item) => (
                   <div
                     key={item.product.id}
-                    className="flex items-center justify-between text-sm"
+                    className="flex items-center justify-between text-sm gap-2"
                   >
-                    <div className="flex-1 pr-2">
-                      <p className="font-medium line-clamp-1">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">
                         {item.product.name}
                       </p>
                       <p className="text-gray-500">Qty: {item.quantity}</p>

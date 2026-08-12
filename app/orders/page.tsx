@@ -122,83 +122,83 @@ export default function MyOrdersPage() {
                 </div>
 
                 {/* ORDER ITEMS */}
-                <div className="flex flex-col gap-3 mb-4">
-                  {order.items.map((item) => (
-                    <div
-                      key={item.product.id}
-                      className="flex items-center justify-between bg-gray-800 rounded-lg p-4"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-700 shrink-0">
-                          {item.product.image && item.product.image.startsWith("data:") ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={item.product.image}
-                              alt={item.product.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
-                              Img
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium">{item.product.name}</p>
-                          <p className="text-gray-400 text-sm">
-                            Qty: {item.quantity}
-                          </p>
-                        </div>
-                      </div>
-                      <p className="text-green-400 font-bold">
-                        ETB {(item.product.price * 160 * item.quantity).toFixed(2)}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+<div className="flex flex-col gap-3 mb-4">
+  {order.items.map((item) => (
+    <div
+      key={item.product.id}
+      className="flex items-center justify-between bg-gray-800 rounded-lg p-3 sm:p-4 gap-3"
+    >
+      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+        <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-700 shrink-0">
+          {item.product.image && item.product.image.startsWith("data:") ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={item.product.image}
+              alt={item.product.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+              Img
+            </div>
+          )}
+        </div>
+        <div className="min-w-0">
+          <p className="font-medium truncate">{item.product.name}</p>
+          <p className="text-gray-400 text-sm">
+            Qty: {item.quantity}
+          </p>
+        </div>
+      </div>
+      <p className="text-green-400 font-bold text-sm sm:text-base whitespace-nowrap">
+        ETB {(item.product.price * 160 * item.quantity).toFixed(2)}
+      </p>
+    </div>
+  ))}
+</div>
 
-                {/* ORDER FOOTER */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-800">
-                  <p className="text-gray-400">
-                    Total:{" "}
-                    <span className="text-white font-bold">
-                      ETB {order.totalAmount.toFixed(2)}
-                    </span>
-                  </p>
+               {/* ORDER FOOTER */}
+<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-gray-800">
+  <p className="text-gray-400">
+    Total:{" "}
+    <span className="text-white font-bold">
+      ETB {order.totalAmount.toFixed(2)}
+    </span>
+  </p>
 
-                  {canCancel(order.status) && (
-                    confirmingCancel === order.id ? (
-                      <div className="flex items-center gap-3">
-                        <span className="text-gray-400 text-sm">
-                          Cancel this order?
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => handleConfirmCancel(order.id)}
-                          className="text-red-400 hover:text-red-300 text-sm font-semibold transition-colors"
-                        >
-                          Yes, Cancel
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setConfirmingCancel(null)}
-                          className="text-gray-400 hover:text-white text-sm transition-colors"
-                        >
-                          Keep Order
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => handleCancelClick(order.id)}
-                        className="text-red-400 hover:text-red-300 text-sm font-medium transition-colors"
-                      >
-                        Cancel Order
-                      </button>
-                    )
-                  )}
-                </div>
-              </div>
+  {canCancel(order.status) && (
+    confirmingCancel === order.id ? (
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="text-gray-400 text-sm">
+          Cancel this order?
+        </span>
+        <button
+          type="button"
+          onClick={() => handleConfirmCancel(order.id)}
+          className="text-red-400 hover:text-red-300 text-sm font-semibold transition-colors"
+        >
+          Yes, Cancel
+        </button>
+        <button
+          type="button"
+          onClick={() => setConfirmingCancel(null)}
+          className="text-gray-400 hover:text-white text-sm transition-colors"
+        >
+          Keep Order
+        </button>
+      </div>
+    ) : (
+      <button
+        type="button"
+        onClick={() => handleCancelClick(order.id)}
+        className="text-red-400 hover:text-red-300 text-sm font-medium transition-colors self-start sm:self-auto"
+      >
+        Cancel Order
+      </button>
+    )
+  )}
+</div> 
+</div>
             ))}
           </div>
         )}

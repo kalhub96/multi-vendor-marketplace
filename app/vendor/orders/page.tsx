@@ -161,40 +161,40 @@ export default function VendorOrdersPage() {
                   </div>
 
                   {/* VENDOR'S ITEMS IN THIS ORDER */}
-                  <div className="flex flex-col gap-3 mb-4">
-                    {vendorItems.map((item) => (
-                      <div
-                        key={item.product.id}
-                        className="flex items-center justify-between bg-gray-800 rounded-lg p-4"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-700 shrink-0">
-                            {item.product.image && item.product.image.startsWith("data:") ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={item.product.image}
-                                alt={item.product.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
-                                Img
-                              </div>
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium">{item.product.name}</p>
-                            <p className="text-gray-400 text-sm">
-                              Qty: {item.quantity}
-                            </p>
-                          </div>
-                        </div>
-                        <p className="text-green-400 font-bold">
-                          ETB {(item.product.price * 160 * item.quantity).toFixed(2)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+<div className="flex flex-col gap-3 mb-4">
+  {vendorItems.map((item) => (
+    <div
+      key={item.product.id}
+      className="flex items-center justify-between bg-gray-800 rounded-lg p-3 sm:p-4 gap-3"
+    >
+      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+        <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-700 shrink-0">
+          {item.product.image && item.product.image.startsWith("data:") ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={item.product.image}
+              alt={item.product.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+              Img
+            </div>
+          )}
+        </div>
+        <div className="min-w-0">
+          <p className="font-medium truncate">{item.product.name}</p>
+          <p className="text-gray-400 text-sm">
+            Qty: {item.quantity}
+          </p>
+        </div>
+      </div>
+      <p className="text-green-400 font-bold text-sm sm:text-base whitespace-nowrap">
+        ETB {(item.product.price * 160 * item.quantity).toFixed(2)}
+      </p>
+    </div>
+  ))}
+</div>
 
                   {/* SHIPPING INFO */}
                   <div className="bg-gray-800 rounded-lg p-4 mb-4">

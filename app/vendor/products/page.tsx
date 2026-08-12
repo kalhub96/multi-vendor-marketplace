@@ -323,83 +323,114 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
           </div>
         )}
 
-        {/* PRODUCTS TABLE */}
+        {/* PRODUCTS- TABLE ON DESKTOP, CARDS ON MOBILE */}
         <div className="bg-gray-900 rounded-xl overflow-hidden">
 
-          {/* TABLE HEADER */}
-          <div className="grid grid-cols-5 gap-4 px-6 py-4 bg-gray-800 text-gray-400 text-sm font-medium">
-            <span className="col-span-2">Product</span>
-            <span>Category</span>
-            <span>Price</span>
-            <span>Stock</span>
-          </div>
-
-          {/* TABLE ROWS */}
-          {products.length === 0 ? (
+          {products.length === 0 ?(
             <div className="text-center py-16 text-gray-500">
               No products yet — add your first one!
             </div>
-          ) : (
-            products.map((product) => (
-              <div
-                key={product.id}
-                className="grid grid-cols-5 gap-4 px-6 py-4 border-t border-gray-800 items-center hover:bg-gray-800/50 transition-colors"
-              >
-                {/* IMAGE + NAME + DESCRIPTION */}
-                <div className="col-span-2 flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-800 shrink-0">
-                    {product.image && product.image.startsWith("data:") ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+          ):(
+            <>
+            {/* DESKTOP TABLE HEADER — hidden on mobile */}
+            <div className="hidden sm:grid grid-cols-5 gap-4 px-6 py-4 bg-gray-800 text-gray-400 text-sm font-medium">
+              <span className="col-span-2">Product</span>
+              <span>Category</span>
+              <span>Price</span>
+              <span>Stock</span>
+            </div>
+            {products.map((product) => (
+              <div key={product.id}>
+                {/* DESKTOP ROW — hidden on mobile */}
+                <div className="hidden sm:grid grid-cols-5 gap-4 px-6 py-4 border-t border-gray-800 items-center hover:bg-gray-800/50 transition-colors">
+                  <div className="col-span-2 flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-lg overfolw-hidden bg-gray-800 shrink-0">
+                      {product.image && product.image.startsWith("data:") ? (
+                         // eslint-disable-next-line @next/next/no-img-element
+                        <img
                         src={product.image}
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
-                        Img
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                          Img
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium">{product.name}</p>
+                      <p className="text-gray-400 text-sm line-clamp-1">
+                        {product.description}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium">{product.name}</p>
-                    <p className="text-gray-400 text-sm line-clamp-1">
-                      {product.description}
-                    </p>
+                  <span className="text-green-400 text-sm capitalize">
+                    {product.category}
+                  </span>
+                  <span className="font-medium">
+                    ETB{(product.price * 160).toFixed(2)}
+                  </span>
+                  <div className="flex items-center justify-between">
+                    <span className={product.stock > 0 ? "text-white" : "text-red-400"}>
+                      {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                    </span>
+                    <button
+                    type="button"
+                    onClick={() => handleDelete(product.id)}
+                    className="text-red-400 hover:text-red-300 text-sm transition-colors"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
+                {/* MOBILE CARD — hidden on desktop */}
+                <div className="sm:hidden border-t border-gray-800 p-4 flex flex-col gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-800 shrink-0">
+                      {product.image && product.image.startsWith("data:") ? (
+                         // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                        />
+                      ): (
+                        <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                          Img
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{product.name}</p>
+                      <span className="text-green-400 text-xs capitalize">
+                        {product.category}
+                      </span>
+                    </div>
+                  </div>
 
-                {/* CATEGORY */}
-                <span className="text-green-400 text-sm capitalize">
-                  {product.category}
-                </span>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400">
+                      Price: <span className="text-white font-medium">ETB{(product.price * 160).toFixed(2)}</span>
+                    </span>
+                    <span className="text-gray-400">
+                      Stock: <span className={product.stock > 0 ? "text-white font-medium" : "text-red-400 font-medium"}>
+                        {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                      </span>
+                    </span>
+                  </div>
 
-                {/* PRICE */}
-                <span className="font-medium">
-                  ETB {(product.price * 160).toFixed(2)}
-                </span>
-
-                {/* STOCK + DELETE */}
-                <div className="flex items-center justify-between">
-                  <span
-                    className={
-                      product.stock > 0
-                        ? "text-white"
-                        : "text-red-400"
-                    }
-                  >
-                    {product.stock}
-                  </span>
                   <button
                     type="button"
                     onClick={() => handleDelete(product.id)}
                     className="text-red-400 hover:text-red-300 text-sm transition-colors"
                   >
-                    Delete
+                    Delete Product
                   </button>
                 </div>
               </div>
-            ))
+            ))}
+            </>
           )}
         </div>
 

@@ -198,28 +198,37 @@ export default function VendorDashboredPage() {
                     </Link>
                 </div>
                 <div className="flex flex-col gap-3">
-                    {vendorProducts.slice(0, 5).map((product) => (
-                        <div
-                            key={product.id}
-                            className="flex items-center justify-between bg-gray-800 rounded-lg p-4"
-                        >
-                            <div className="flex items-center gap-4">
-                                <div className="bg-gray-700 w-12 h-12 rounded-lg flex items-center justify-center text-xs text-gray-500">
-                                    Img
-                                </div>
-                                <div>
-                                    <p className="font-medium">{product.name}</p>
-                                    <p className="text-gray-400 text-sm">
-                                        {product.stock} in stock
-                                    </p>
-                                </div>
-                            </div>
-                            <p className="text-green-400 font-bold">
-                                ETB {(product.price * 160).toFixed(2)}
-                            </p>
-                        </div>
-                    ))}
+    {vendorProducts.slice(0, 5).map((product) => (
+        <div
+            key={product.id}
+            className="flex items-center justify-between bg-gray-800 rounded-lg p-3 sm:p-4 gap-3"
+        >
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                <div className="bg-gray-700 w-12 h-12 rounded-lg flex items-center justify-center text-xs text-gray-500 shrink-0 overflow-hidden">
+                    {product.image && product.image.startsWith("data:") ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        "Img"
+                    )}
                 </div>
+                <div className="min-w-0">
+                    <p className="font-medium truncate">{product.name}</p>
+                    <p className="text-gray-400 text-sm">
+                        {product.stock} in stock
+                    </p>
+                </div>
+            </div>
+            <p className="text-green-400 font-bold text-sm sm:text-base whitespace-nowrap">
+                ETB {(product.price * 160).toFixed(2)}
+            </p>
+        </div>
+    ))}
+</div>
             </div>
 
         </section>

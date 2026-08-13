@@ -2,20 +2,12 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 import CartBadge from "@/components/cart-badge"
 import AuthButton from "@/components/auth-button"
 import SearchBar from "@/components/search-bar"
 
-const FULLSCREEN_ROUTES = ["/vendor/verify-face"]
-
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const pathname = usePathname()
-
-  if (FULLSCREEN_ROUTES.includes(pathname)) {
-    return null
-  }
 
   return (
     <nav className="bg-gray-900 text-white px-4 sm:px-8 py-4 relative">

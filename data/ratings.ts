@@ -9,7 +9,7 @@ export const initialRatings: Rating[] = [
         buyerName: "John Buyer",
         stars: 5,
         comment: "Amazing headphones! The noise cancellation is top notch.",
-        createdAt: "2024-20-12",
+        createdAt: "2024-02-03",
     },
 
     {

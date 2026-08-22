@@ -118,7 +118,7 @@ export default function ProductDetailPage({
 
   if (!productsLoaded) {
     return (
-      <main className="min-h-screen bg-gray-950 text-white">
+      <main className="min-h-screen bg-background text-foreground">
         <div className="max-w-6xl mx-auto px-8 py-6">
           <Skeleton className="h-4 w-32" />
         </div>
@@ -141,7 +141,7 @@ export default function ProductDetailPage({
 
   if (!product) {
     return (
-      <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
+      <main className="min-h-screen bg-background text-foreground flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-4">Product Not Found</h1>
           <Link href="/products" className="text-green-400 hover:underline">
@@ -203,12 +203,12 @@ export default function ProductDetailPage({
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-background text-foreground">
 
       <div className="max-w-6xl mx-auto px-8 py-6">
         <Link
           href="/products"
-          className="text-gray-400 hover:text-green-400 transition-colors text-sm"
+          className="text-foreground-secondary hover:text-green-400 transition-colors text-sm"
         >
           ← Back to Marketplace
         </Link>
@@ -221,7 +221,7 @@ export default function ProductDetailPage({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-gray-800 rounded-2xl h-96 flex items-center justify-center overflow-hidden"
+            className="bg-background-tertiary rounded-2xl h-96 flex items-center justify-center overflow-hidden"
           >
             {product.image && product.image.startsWith("data:") ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -231,7 +231,7 @@ export default function ProductDetailPage({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-gray-600">No Image Yet</span>
+              <span className="text-foreground-secondary">No Image Yet</span>
             )}
           </motion.div>
 
@@ -257,7 +257,7 @@ export default function ProductDetailPage({
             <p className="text-4xl font-bold text-green-400 mb-4">
               ETB {(product.price * 160).toFixed(2)}
             </p>
-            <p className="text-gray-400 mb-6 leading-relaxed">
+            <p className="text-foreground-secondary mb-6 leading-relaxed">
               {product.description}
             </p>
             <p className="text-sm mb-6">
@@ -270,21 +270,21 @@ export default function ProductDetailPage({
               )}
             </p>
             {vendor && (
-              <p className="text-sm text-gray-400 mb-6">
+              <p className="text-sm text-foreground-secondary mb-6">
                 Sold by{" "}
-                <span className="text-white font-medium">
+                <span className="text-foreground font-medium">
                   {vendor.storeName}
                 </span>
               </p>
             )}
 
             <div className="flex items-center gap-4 mb-6">
-              <span className="text-gray-400 text-sm">Quantity:</span>
-              <div className="flex items-center gap-3 bg-gray-800 rounded-full px-4 py-2">
+              <span className="text-foreground-secondary text-sm">Quantity:</span>
+              <div className="flex items-center gap-3 bg-background-tertiary rounded-full px-4 py-2">
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="text-gray-400 hover:text-white font-bold text-lg"
+                  className="text-foreground-secondary hover:text-foreground font-bold text-lg"
                 >
                   −
                 </button>
@@ -302,7 +302,7 @@ export default function ProductDetailPage({
                   onClick={() =>
                     setQuantity((q) => Math.min(product.stock, q + 1))
                   }
-                  className="text-gray-400 hover:text-white font-bold text-lg"
+                  className="text-foreground-secondary hover:text-foreground font-bold text-lg"
                 >
                   +
                 </button>
@@ -331,17 +331,17 @@ export default function ProductDetailPage({
           <h2 className="text-2xl font-bold mb-8">
             Customer Reviews
             {productRatings.length > 0 && (
-              <span className="text-gray-400 text-lg font-normal ml-3">
+              <span className="text-foreground-secondary text-lg font-normal ml-3">
                 ({productRatings.length} reviews)
               </span>
             )}
           </h2>
 
           {/* RATING FORM */}
-          <div className="bg-gray-900 rounded-xl p-6 mb-8">
+          <div className="bg-background-secondary rounded-xl p-6 mb-8">
 
             {!currentUser && (
-              <p className="text-gray-400">
+              <p className="text-foreground-secondary">
                 <Link href="/login" className="text-green-400 hover:underline">
                   Log in
                 </Link>{" "}
@@ -350,7 +350,7 @@ export default function ProductDetailPage({
             )}
 
             {currentUser && currentUser.role !== "buyer" && (
-              <p className="text-gray-400">
+              <p className="text-foreground-secondary">
                 Only buyers can leave reviews
               </p>
             )}
@@ -369,7 +369,7 @@ export default function ProductDetailPage({
               currentUser.role === "buyer" &&
               !isSuspended &&
               !hasPurchased && (
-                <p className="text-gray-400">
+                <p className="text-foreground-secondary">
                   Purchase this product to leave a review
                 </p>
               )}
@@ -420,7 +420,7 @@ export default function ProductDetailPage({
                       </button>
                     ))}
                     {selectedStars > 0 && (
-                      <span className="text-gray-400 ml-2 text-sm">
+                      <span className="text-foreground-secondary ml-2 text-sm">
                         {["", "Poor", "Fair", "Good", "Very Good", "Excellent"][selectedStars]}
                       </span>
                     )}
@@ -431,7 +431,7 @@ export default function ProductDetailPage({
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Share your experience with this product..."
                     rows={3}
-                    className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500 resize-none mb-4"
+                    className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500 resize-none mb-4"
                   />
 
                   {/* SUBMIT */}
@@ -449,7 +449,7 @@ export default function ProductDetailPage({
 
           {/* EXISTING RATINGS LIST */}
           {productRatings.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">
+            <p className="text-foreground-secondary text-center py-8">
               No reviews yet — be the first to review this product!
             </p>
           ) : (
@@ -457,12 +457,12 @@ export default function ProductDetailPage({
               {productRatings.map((rating) => (
                 <div
                   key={rating.id}
-                  className="bg-gray-900 rounded-xl p-6"
+                  className="bg-background-secondary rounded-xl p-6"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="font-semibold">{rating.buyerName}</p>
-                      <p className="text-gray-500 text-xs mt-1">
+                      <p className="text-foreground-secondary text-xs mt-1">
                         {new Date(rating.createdAt).toLocaleDateString()}
                       </p>
                     </div>
@@ -473,7 +473,7 @@ export default function ProductDetailPage({
                     />
                   </div>
                   {rating.comment && (
-                    <p className="text-gray-300 leading-relaxed">
+                    <p className="text-foreground-secondary leading-relaxed">
                       {rating.comment}
                     </p>
                   )}
@@ -501,9 +501,9 @@ export default function ProductDetailPage({
                   <Link
                     key={mlProduct.id}
                     href={`/products/${mlProduct.id}`}
-                    className="bg-gray-900 rounded-xl overflow-hidden hover:ring-2 hover:ring-purple-400 transition-all"
+                    className="bg-background-secondary rounded-xl overflow-hidden hover:ring-2 hover:ring-purple-400 transition-all"
                   >
-                    <div className="bg-gray-800 h-40 flex items-center justify-center overflow-hidden">
+                    <div className="bg-background-tertiary h-40 flex items-center justify-center overflow-hidden">
                       {mlProduct.image && mlProduct.image.startsWith("data:") ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -512,7 +512,7 @@ export default function ProductDetailPage({
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span className="text-gray-600 text-sm">No Image Yet</span>
+                        <span className="text-foreground-secondary text-sm">No Image Yet</span>
                       )}
                     </div>
                     <div className="p-4">
@@ -542,9 +542,9 @@ export default function ProductDetailPage({
                 <Link
                   key={rec.id}
                   href={`/products/${rec.id}`}
-                  className="bg-gray-900 rounded-xl overflow-hidden hover:ring-2 hover:ring-green-400 transition-all"
+                  className="bg-background-secondary rounded-xl overflow-hidden hover:ring-2 hover:ring-green-400 transition-all"
                 >
-                  <div className="bg-gray-800 h-40 flex items-center justify-center overflow-hidden">
+                  <div className="bg-background-tertiary h-40 flex items-center justify-center overflow-hidden">
                     {rec.image && rec.image.startsWith("data:") ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -553,7 +553,7 @@ export default function ProductDetailPage({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-gray-600 text-sm">No Image Yet</span>
+                      <span className="text-foreground-secondary text-sm">No Image Yet</span>
                     )}
                   </div>
                   <div className="p-4">

@@ -9,18 +9,18 @@ export default function CartPage() {
 
   if (!loaded) {
     return (
-      <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
-        <p className="text-gray-400">Loading cart...</p>
+      <main className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <p className="text-foreground-secondary">Loading cart...</p>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-background text-foreground">
 
-      <section className="bg-gray-900 py-10 px-8 text-center">
+      <section className="bg-background-secondary py-10 px-8 text-center">
         <h1 className="text-3xl font-bold">Your Cart</h1>
-        <p className="text-gray-400 mt-2">
+        <p className="text-foreground-secondary mt-2">
           {cartItems.length === 0
             ? "Your cart is empty"
             : `${cartItems.length} item(s) in your cart`}
@@ -32,7 +32,7 @@ export default function CartPage() {
         {cartItems.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-6xl mb-6">🛒</p>
-            <p className="text-gray-400 mb-6">
+            <p className="text-foreground-secondary mb-6">
               You haven't added anything yet
             </p>
             <Link
@@ -49,11 +49,11 @@ export default function CartPage() {
               {cartItems.map((item) => (
                 <div
                   key={item.product.id}
-                  className="bg-gray-900 rounded-xl p-4 sm:p-6 flex flex-col gap-4"
+                  className="bg-background-secondary rounded-xl p-4 sm:p-6 flex flex-col gap-4"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="bg-gray-800 w-20 h-20 sm:w-24 sm:h-24 rounded-lg flex items-center justify-center shrink-0">
-                      <span className="text-gray-600 text-xs">No Image</span>
+                    <div className="bg-background-tertiary w-20 h-20 sm:w-24 sm:h-24 rounded-lg flex items-center justify-center shrink-0">
+                      <span className="text-foreground-secondary text-xs">No Image</span>
                     </div>
 
                     <div className="flex-1 min-w-0">
@@ -63,18 +63,18 @@ export default function CartPage() {
                       <h3 className="font-semibold text-base sm:text-lg mt-1 truncate">
                         {item.product.name}
                       </h3>
-                      <p className="text-gray-400 font-bold mt-1">
+                      <p className="text-foreground-secondary font-bold mt-1">
                         ETB {(item.product.price * 160).toFixed(2)}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 bg-gray-800 rounded-full px-4 py-2 w-fit">
+                  <div className="flex items-center gap-3 bg-background-tertiary rounded-full px-4 py-2 w-fit">
                     <button
                       type="button"
                       onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                      className="text-gray-400 hover:text-white font-bold text-lg"
+                      className="text-foreground-secondary hover:text-foreground font-bold text-lg"
                     >
                       −
                     </button>
@@ -84,14 +84,14 @@ export default function CartPage() {
                     <button
                       type="button"
                       onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                      className="text-gray-400 hover:text-white font-bold text-lg"
+                      className="text-foreground-secondary hover:text-foreground font-bold text-lg"
                     >
                       +
                     </button>
                   </div>
 
                   <div className="text-right">
-                    <p className="text-white font-bold">
+                    <p className="text-foreground font-bold">
                       ETB {(item.product.price * 160 * item.quantity).toFixed(2)}
                     </p>
                     <button
@@ -109,18 +109,18 @@ export default function CartPage() {
               ))}
             </div>
 
-            <div className="bg-gray-900 rounded-xl p-6">
+            <div className="bg-background-secondary rounded-xl p-6">
               <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-              <div className="flex justify-between text-gray-400 mb-2">
+              <div className="flex justify-between text-foreground-secondary mb-2">
                 <span>Subtotal</span>
                 <span>ETB {cartTotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-gray-400 mb-2">
+              <div className="flex justify-between text-foreground-secondary mb-2">
                 <span>Shipping</span>
                 <span className="text-green-400">Free</span>
               </div>
-              <div className="border-t border-gray-800 my-4" />
-              <div className="flex justify-between text-white font-bold text-xl mb-6">
+              <div className="border-t border-border my-4" />
+              <div className="flex justify-between text-foreground font-bold text-xl mb-6">
                 <span>Total</span>
                 <span className="text-green-400">ETB {cartTotal.toFixed(2)}</span>
               </div>
@@ -131,7 +131,7 @@ export default function CartPage() {
               </Link>
               <Link
                 href="/products"
-                className="block text-center text-gray-400 hover:text-white mt-4 transition-colors"
+                className="block text-center text-foreground-secondary hover:text-foreground mt-4 transition-colors"
               >
                 Continue Shopping
               </Link>

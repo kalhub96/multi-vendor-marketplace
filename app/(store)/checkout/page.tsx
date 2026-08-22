@@ -53,8 +53,8 @@ export default function CheckoutPage() {
 
   if (!authLoaded || !cartLoaded || !currentUser || cartItems.length === 0) {
     return (
-      <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
-        <p className="text-gray-400">Loading checkout...</p>
+      <main className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <p className="text-foreground-secondary">Loading checkout...</p>
       </main>
     )
   }
@@ -97,12 +97,12 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-background text-foreground">
 
       {/* HEADER */}
-      <section className="bg-gray-900 py-8 sm:py-10 px-4 sm:px-8 text-center">
+      <section className="bg-background-secondary py-8 sm:py-10 px-4 sm:px-8 text-center">
         <h1 className="text-2xl sm:text-3xl font-bold">Checkout</h1>
-        <p className="text-gray-400 mt-2">
+        <p className="text-foreground-secondary mt-2">
           Complete your order in a few steps
         </p>
       </section>
@@ -120,22 +120,22 @@ export default function CheckoutPage() {
             )}
 
             {/* SHIPPING INFO */}
-            <div className="bg-gray-900 rounded-xl p-6">
+            <div className="bg-background-secondary rounded-xl p-6">
               <h2 className="text-lg font-bold mb-4">Shipping Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="text-sm text-gray-400 mb-1 block">
+                  <label className="text-sm text-foreground-secondary mb-1 block">
                     Full Name
                   </label>
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                    className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
                   />
                 </div>
                 <div>
-                  <label className="text-sm text-gray-400 mb-1 block">
+                  <label className="text-sm text-foreground-secondary mb-1 block">
                     Phone Number
                   </label>
                   <input
@@ -143,11 +143,11 @@ export default function CheckoutPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="0911223344"
-                    className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                    className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="text-sm text-gray-400 mb-1 block">
+                  <label className="text-sm text-foreground-secondary mb-1 block">
                     City
                   </label>
                   <input
@@ -155,11 +155,11 @@ export default function CheckoutPage() {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="e.g. Addis Ababa"
-                    className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                    className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="text-sm text-gray-400 mb-1 block">
+                  <label className="text-sm text-foreground-secondary mb-1 block">
                     Delivery Address
                   </label>
                   <textarea
@@ -167,14 +167,14 @@ export default function CheckoutPage() {
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Street, landmark, house number..."
                     rows={2}
-                    className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500 resize-none"
+                    className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500 resize-none"
                   />
                 </div>
               </div>
             </div>
 
             {/* PAYMENT METHOD */}
-            <div className="bg-gray-900 rounded-xl p-6">
+            <div className="bg-background-secondary rounded-xl p-6">
               <h2 className="text-lg font-bold mb-4">Payment Method</h2>
               <div className="flex flex-col gap-3">
                 {paymentOptions.map((option) => (
@@ -182,8 +182,8 @@ export default function CheckoutPage() {
                     key={option.value}
                     className={`flex items-center gap-4 p-4 rounded-lg border cursor-pointer transition-colors ${
                       paymentMethod === option.value
-                        ? "border-green-400 bg-gray-800"
-                        : "border-gray-800 bg-gray-800/50 hover:bg-gray-800"
+                        ? "border-green-400 bg-background-tertiary"
+                        : "border-border bg-background-tertiary/50 hover:bg-background-tertiary"
                     }`}
                   >
                     <input
@@ -195,7 +195,7 @@ export default function CheckoutPage() {
                     />
                     <div>
                       <p className="font-medium">{option.label}</p>
-                      <p className="text-gray-400 text-sm">{option.hint}</p>
+                      <p className="text-foreground-secondary text-sm">{option.hint}</p>
                     </div>
                   </label>
                 ))}
@@ -206,7 +206,7 @@ export default function CheckoutPage() {
 
           {/* RIGHT — ORDER SUMMARY */}
           <div className="lg:col-span-1">
-            <div className="bg-gray-900 rounded-xl p-6 lg:sticky lg:top-6">
+            <div className="bg-background-secondary rounded-xl p-6 lg:sticky lg:top-6">
               <h2 className="text-lg font-bold mb-4">Order Summary</h2>
 
               <div className="flex flex-col gap-3 mb-4 max-h-64 overflow-y-auto">
@@ -219,7 +219,7 @@ export default function CheckoutPage() {
                       <p className="font-medium truncate">
                         {item.product.name}
                       </p>
-                      <p className="text-gray-500">Qty: {item.quantity}</p>
+                      <p className="text-foreground-secondary">Qty: {item.quantity}</p>
                     </div>
                     <p className="text-green-400 font-semibold whitespace-nowrap">
                       ETB {(item.product.price * 160 * item.quantity).toFixed(2)}
@@ -228,16 +228,16 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              <div className="border-t border-gray-800 pt-4 flex flex-col gap-2">
-                <div className="flex justify-between text-gray-400 text-sm">
+              <div className="border-t border-border pt-4 flex flex-col gap-2">
+                <div className="flex justify-between text-foreground-secondary text-sm">
                   <span>Subtotal</span>
                   <span>ETB {cartTotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-gray-400 text-sm">
+                <div className="flex justify-between text-foreground-secondary text-sm">
                   <span>Shipping</span>
                   <span className="text-green-400">Free</span>
                 </div>
-                <div className="flex justify-between text-white font-bold text-lg pt-2 border-t border-gray-800">
+                <div className="flex justify-between text-foreground font-bold text-lg pt-2 border-t border-border">
                   <span>Total</span>
                   <span className="text-green-400">
                     ETB {cartTotal.toFixed(2)}
@@ -256,7 +256,7 @@ export default function CheckoutPage() {
 
               <Link
                 href="/cart"
-                className="block text-center text-gray-400 hover:text-white mt-4 text-sm transition-colors"
+                className="block text-center text-foreground-secondary hover:text-foreground mt-4 text-sm transition-colors"
               >
                 ← Back to Cart
               </Link>

@@ -24,23 +24,20 @@ export default function VendorDashboredPage() {
     
 
     useEffect(() => {
-        console.log("VENDOR DASHBOARD CHECK:", { loaded, currentUser })
         if (!loaded) return
         if (!currentUser) {
-            console.log("REDIRECTING — no currentUser")
             router.push("/login")
             return
         }
         if (currentUser.role !== "vendor"){
-            console.log("REDIRECTING — wrong role:", currentUser.role)
             router.push("/")
         }
     }, [currentUser, loaded, router])
 
     if (!loaded || !currentUser) {
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
-      <section className="bg-gray-900 py-10 px-8">
+    <main className="min-h-screen bg-background text-foreground">
+      <section className="bg-background-secondary py-10 px-8">
         <div className="max-w-6xl mx-auto flex flex-col gap-2">
           <Skeleton className="h-3 w-32" />
           <Skeleton className="h-8 w-64" />
@@ -50,7 +47,7 @@ export default function VendorDashboredPage() {
       <section className="max-w-6xl mx-auto px-8 py-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-gray-900 rounded-xl p-6 flex flex-col gap-3">
+            <div key={i} className="bg-background-secondary rounded-xl p-6 flex flex-col gap-3">
               <Skeleton className="h-3 w-20" />
               <Skeleton className="h-8 w-16" />
             </div>
@@ -74,10 +71,10 @@ export default function VendorDashboredPage() {
     )
 
     return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-background text-foreground">
 
         {/* HEADER */}
-        <section className="bg-gray-900 py-10 px-8">
+        <section className="bg-background-secondary py-10 px-8">
             <div className="max-w-6xl mx-auto">
                 <p className="text-green-400 text-sm font-medium mb-1">
                     Vendor Dashboard
@@ -88,7 +85,7 @@ export default function VendorDashboredPage() {
                         <span className="text-green-400 text-xl" title="Verified Store">✓</span>
                     )}
                 </h1>
-                <p className="text-gray-400 mt-2">
+                <p className="text-foreground-secondary mt-2">
                     Here's what's happening with your store today
                 </p>
             </div>
@@ -115,15 +112,14 @@ export default function VendorDashboredPage() {
         <section className="max-w-6xl mx-auto px-8 py-10">
 
             {/* STATS GRID */}
-            {/* STATS GRID */}
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0 }}
-      className="bg-gray-900 rounded-xl p-6"
+      className="bg-background-secondary rounded-xl p-6"
     >
-        <p className="text-gray-400 text-sm mb-2">Total Products</p>
+        <p className="text-foreground-secondary text-sm mb-2">Total Products</p>
         <p className="text-3xl font-bold text-green-400">
             <AnimatedNumber value={vendorProducts.length} />
         </p>
@@ -132,9 +128,9 @@ export default function VendorDashboredPage() {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.1 }}
-      className="bg-gray-900 rounded-xl p-6"
+      className="bg-background-secondary rounded-xl p-6"
     >
-        <p className="text-gray-400 text-sm mb-2">Total Orders</p>
+        <p className="text-foreground-secondary text-sm mb-2">Total Orders</p>
         <p className="text-3xl font-bold text-green-400">
           <AnimatedNumber value={orders.length} />
         </p>
@@ -143,9 +139,9 @@ export default function VendorDashboredPage() {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="bg-gray-900 rounded-xl p-6"
+      className="bg-background-secondary rounded-xl p-6"
     >
-        <p className="text-gray-400 text-sm mb-2">Total Revenue</p>
+        <p className="text-foreground-secondary text-sm mb-2">Total Revenue</p>
         <p className="text-3xl font-bold text-green-400">
             <AnimatedNumber value={totalRevenue} prefix="ETB " />
         </p>
@@ -154,15 +150,15 @@ export default function VendorDashboredPage() {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.3 }}
-      className="bg-gray-900 rounded-xl p-6"
+      className="bg-background-secondary rounded-xl p-6"
     >
-        <p className="text-gray-400 text-sm mb-2">Store Rating</p>
+        <p className="text-foreground-secondary text-sm mb-2">Store Rating</p>
         <p className="text-3xl font-bold text-green-400">
             {getVendorAverage("vendor_1") > 0
               ? <><AnimatedNumber value={getVendorAverage("vendor_1")} decimals={1} /> ★</>
               : "No ratings yet"}
         </p>
-        <p className="text-gray-500 text-xs mt-1">
+        <p className="text-foreground-secondary text-xs mt-1">
             {ratings.filter((r) => r.vendorId === "vendor_1").length} reviews
         </p>
     </motion.div>
@@ -176,18 +172,18 @@ export default function VendorDashboredPage() {
                 </Link>
                 <Link
                 href="/vendor/orders"
-                className="bg-gray-800 text-white font-semibold px-6 py-3 rounded-full hover:bg-gray-700 transition-colors">
+                className="bg-background-tertiary text-foreground font-semibold px-6 py-3 rounded-full hover:opacity-80 transition-colors">
                     View Orders
                 </Link>
                 <Link
                 href="/products"
-                className="bg-gray-800 text-white font-semibold px-6 py-3 rounded-full hover:bg-gray-700 transition-colors">
+                className="bg-background-tertiary text-foreground font-semibold px-6 py-3 rounded-full hover:opacity-80 transition-colors">
                     View Storefront
                 </Link>
             </div>
 
             {/* YOUR PRODUCTS — outside the grid */}
-            <div className="bg-gray-900 rounded-xl p-6">
+            <div className="bg-background-secondary rounded-xl p-6">
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold">Your Products</h2>
                     <Link
@@ -201,10 +197,10 @@ export default function VendorDashboredPage() {
     {vendorProducts.slice(0, 5).map((product) => (
         <div
             key={product.id}
-            className="flex items-center justify-between bg-gray-800 rounded-lg p-3 sm:p-4 gap-3"
+            className="flex items-center justify-between bg-background-tertiary rounded-lg p-3 sm:p-4 gap-3"
         >
             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                <div className="bg-gray-700 w-12 h-12 rounded-lg flex items-center justify-center text-xs text-gray-500 shrink-0 overflow-hidden">
+                <div className="bg-background-secondary w-12 h-12 rounded-lg flex items-center justify-center text-xs text-foreground-secondary shrink-0 overflow-hidden">
                     {product.image && product.image.startsWith("data:") ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -218,7 +214,7 @@ export default function VendorDashboredPage() {
                 </div>
                 <div className="min-w-0">
                     <p className="font-medium truncate">{product.name}</p>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-foreground-secondary text-sm">
                         {product.stock} in stock
                     </p>
                 </div>

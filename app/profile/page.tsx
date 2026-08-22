@@ -8,6 +8,7 @@ import { useUsers } from "@/lib/users-context"
 import { vendors } from "@/data/users"
 import { orders } from "@/data/orders"
 import { useRatings } from "@/lib/ratings-context"
+import { useTheme } from "@/lib/theme-context"
 import toast from "react-hot-toast"
 
 export default function ProfilePage() {
@@ -15,6 +16,7 @@ export default function ProfilePage() {
   const { currentUser, loaded, updateUser, logout } = useAuth()
   const { getUserById } = useUsers()
   const { getVendorAverage } = useRatings()
+  const { theme, setTheme } = useTheme()
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -322,6 +324,49 @@ export default function ProfilePage() {
             >
               Update Password
             </button>
+          </div>
+        </div>
+
+        {/* APPEARANCE */}
+        <div className="bg-gray-900 rounded-xl p-6">
+          <h2 className="text-lg font-bold mb-4">Appearance</h2>
+          <p className="text-gray-400 text-sm mb-4">
+            Choose your preferred theme.
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            <button
+            type="button"
+            onClick={() => setTheme("light")}
+            className={`flex flex-col items-center gap-2 py-4 rounded-lg border-2 transition-colors ${
+            theme === "light" ? "border-green-800 bg-gray-800" : "border-gray-800/50 hover:bg-gray-800"
+        }`}
+          >
+            <span className="text-2xl">☀️</span>
+            <span className="text-sm font-medium">Light</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setTheme("dark")}
+            className={`flex flex-col items-center gap-2 py-4 rounded-lg border-2 transition-colors ${
+            theme === "dark" ? "border-green-800 bg-gray-800" : "border-gray-800/50 hover:bg-gray-800"
+        }`}
+          >
+            <span className="text-2xl">🌙</span>
+            <span className="text-sm font-medium">Dark</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setTheme("system")}
+            className={`flex flex-col items-center gap-2 py-4 rounded-lg border-2 transition-colors ${
+            theme === "system" ? "border-green-800 bg-gray-800" : "border-gray-800/50 hover:bg-gray-800"
+        }`}
+          >
+            <span className="text-2xl">💻</span>
+            <span className="text-sm font-medium">System</span>
+          </button>
+
           </div>
         </div>
 

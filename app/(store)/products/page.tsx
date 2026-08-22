@@ -43,12 +43,12 @@ export default function ProductsPage() {
       : searchedProducts.filter((p) => p.category === selectedCategory)
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-background text-foreground">
 
       {/* PAGE HEADER */}
-      <section className="bg-gray-900 py-10 px-8 text-center">
+      <section className="bg-background-secondary py-10 px-8 text-center">
         <h1 className="text-3xl font-bold mb-2">Marketplace</h1>
-        <p className="text-gray-400">
+        <p className="text-foreground-secondary">
           {searchQuery
             ? `Search results for "${searchQuery}"`
             : "Discover products from the best vendors"}
@@ -56,7 +56,7 @@ export default function ProductsPage() {
       </section>
 
       {/* CATEGORY FILTER TABS */}
-      <section className="bg-gray-900 border-t border-gray-800 px-8 py-4">
+      <section className="bg-background-secondary border-t border-border px-8 py-4">
         <div className="max-w-6xl mx-auto flex gap-3 overflow-x-auto">
           {categories.map((cat) => (
             <button
@@ -66,7 +66,7 @@ export default function ProductsPage() {
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                 selectedCategory === cat.value
                   ? "bg-green-400 text-gray-900"
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                  : "bg-background-tertiary text-foreground-secondary hover:opacity-80"
               }`}
             >
               {cat.label}
@@ -78,7 +78,7 @@ export default function ProductsPage() {
       {/* RESULTS COUNT + CLEAR SEARCH */}
       <section className="max-w-6xl mx-auto px-8 py-4">
         <div className="flex items-center justify-between">
-          <p className="text-gray-400 text-sm">
+          <p className="text-foreground-secondary text-sm">
             Showing {filteredProducts.length} products
           </p>
           {searchQuery && (
@@ -95,29 +95,29 @@ export default function ProductsPage() {
       {/* PRODUCTS GRID */}
       <section className="max-w-6xl mx-auto px-8 pb-16">
         {!productsLoaded ? (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="bg-gray-900 rounded-xl overflow-hidden">
-          <Skeleton className="h-48 w-full rounded-none" />
-          <div className="p-4 flex flex-col gap-2">
-            <Skeleton className="h-3 w-16" />
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-3 w-full" />
-            <div className="flex items-center justify-between mt-2">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-7 w-16 rounded-full" />
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="bg-background-secondary rounded-xl overflow-hidden">
+                <Skeleton className="h-48 w-full rounded-none" />
+                <div className="p-4 flex flex-col gap-2">
+                  <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-full" />
+                  <div className="flex items-center justify-between mt-2">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-7 w-16 rounded-full" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      ))}
-    </div>
-  ) :filteredProducts.length === 0 ? (
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-5xl mb-4">🔍</p>
-            <p className="text-gray-400 mb-2">
+            <p className="text-foreground-secondary mb-2">
               No products found{searchQuery && ` for "${searchQuery}"`}
             </p>
-            <p className="text-gray-500 text-sm">
+            <p className="text-foreground-secondary text-sm">
               Try a different search term or category
             </p>
           </div>
@@ -127,17 +127,18 @@ export default function ProductsPage() {
               <Link
                 key={product.id}
                 href={`/products/${product.id}`}
-                className="bg-gray-900 rounded-xl overflow-hidden hover:ring-2 hover:ring-green-400 transition-all"
+                className="bg-background-secondary rounded-xl overflow-hidden hover:ring-2 hover:ring-green-400 transition-all"
               >
-                <div className="bg-gray-800 h-48 flex items-center justify-center overflow-hidden">
+                <div className="bg-background-tertiary h-48 flex items-center justify-center overflow-hidden">
                   {product.image && product.image.startsWith("data:") ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover"/>
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
-                  <span className="text-gray-600 text-sm">No Image Yet</span>
+                    <span className="text-foreground-secondary text-sm">No Image Yet</span>
                   )}
                 </div>
 
@@ -146,7 +147,7 @@ export default function ProductsPage() {
                     {product.category}
                   </span>
                   <h3 className="font-semibold mt-1 mb-1">{product.name}</h3>
-                  <p className="text-gray-400 text-sm mb-3 line-clamp-2">
+                  <p className="text-foreground-secondary text-sm mb-3 line-clamp-2">
                     {product.description}
                   </p>
 

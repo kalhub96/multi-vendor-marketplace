@@ -1,6 +1,6 @@
 "use client"
 
-import { use , useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useUsers } from "@/lib/users-context"
@@ -17,7 +17,6 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false)
 
     const handleLogin = () => {
-        console.log("CLICKED")
         setError("")
 
         if (!email || !password) {
@@ -62,10 +61,10 @@ export default function LoginPage() {
 }
 
 return (
-    <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-4">
+    <main className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
         <div className="w-full max-w-md">
 
-            <div className="bg-gray-900 rounded-2xl p-8">
+            <div className="bg-background-secondary rounded-2xl p-8">
 
                 <div className="text-center mb-8">
                     <Link href="/" 
@@ -73,7 +72,7 @@ return (
                         MultiMart
                     </Link>
                     <h1 className="text-2xl font-bold mt-4">Welcome back</h1>
-                    <p className="text-gray-400 mt-1">Sign in to your account</p>
+                    <p className="text-foreground-secondary mt-1">Sign in to your account</p>
                 </div>
                 
                 {error && (
@@ -89,7 +88,7 @@ return (
                     className="flex flex-col gap-4"
                     >
                         <div>
-                            <label className="test-sm text-gray-400 mb-1 block">
+                            <label className="text-sm text-foreground-secondary mb-1 block">
                                 Email Address
                             </label>
                             <input 
@@ -97,11 +96,11 @@ return (
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="you@example.com"
-                            className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                            className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
                             />
                         </div>
                         <div>
-                            <label className="text-sm text-gray-400 mb-1 block">
+                            <label className="text-sm text-foreground-secondary mb-1 block">
                                 Password
                             </label>
                             <input 
@@ -109,7 +108,7 @@ return (
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="••••••••"
-                            className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                            className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
                             />
                         </div>
                         <button
@@ -120,22 +119,7 @@ return (
                             {loading ? "signin in..." : "sign in"}
                         </button>
                     </form>
-                {/* MOCK USER HINTS */}
-                <div className="mt-6 bg-gray-800 rounded-lg p-4">
-                    <p className="text-xs text-gray-400 mb-2 font-medium">
-                        Test accounts:
-                    </p>
-                    <p className="text-xs text-gray-500">
-                        Buyer: john@example.com
-                    </p>
-                    <p className="text-xs text-gray-500">
-                        Vendor: sarah@example.com
-                    </p>
-                    <p className="text-xs text-gray-500">
-                        Admin: admin@example.com
-                    </p>
-                </div>
-                <p className="text-center text-gray-400 text-sm mt-6">
+                <p className="text-center text-foreground-secondary text-sm mt-6">
                         Don't have an account?{" "}
                     <Link
                     href="/register"

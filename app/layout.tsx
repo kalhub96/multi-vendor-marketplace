@@ -9,6 +9,7 @@ import { ProductsProvider } from "@/lib/products-context"
 import { UsersProvider } from "@/lib/users-context"
 import { OrdersProvider } from "@/lib/orders-context"
 import { VendorsProvider } from "@/lib/vendors-context"
+import { ThemeProvider } from "@/lib/theme-context"
 import { Toaster } from "react-hot-toast"
 
 const geistSans = Geist({
@@ -33,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}>
         <Toaster
         position="top-right"
         toastOptions={{
@@ -49,7 +50,8 @@ export default function RootLayout({
             },
           },
         }}/>
-        <AuthProvider>
+         <ThemeProvider>
+           <AuthProvider>
   <UsersProvider>
     <VendorsProvider>
       <ProductsProvider>
@@ -65,6 +67,7 @@ export default function RootLayout({
     </VendorsProvider>
   </UsersProvider>
 </AuthProvider>
+</ThemeProvider>
       </body>
     </html>
   )

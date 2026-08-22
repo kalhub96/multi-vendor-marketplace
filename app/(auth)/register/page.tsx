@@ -36,8 +36,8 @@ export default function RegisterPage() {
         setLoading(true)
 
         setTimeout(() => {
-            const newUser ={
-                id: 'user_${Date.now()}',
+            const newUser = {
+                id: `user_${Date.now()}`,
                 name,
                 email,
                 role,
@@ -49,7 +49,7 @@ export default function RegisterPage() {
             toast.success(`Welcome to MultiMart, ${newUser.name}!`)
 
             if (role === "vendor"){
-                window.location.href = "/vendor/dashbored"
+                window.location.href = "/vendor/dashboard"
             }else {
                 window.location.href = "/"
             }
@@ -59,7 +59,7 @@ export default function RegisterPage() {
     }
 
     return(
-        <main className="min-h-screen bg-gray-950 text-white flex item-center justify-center px-4 py-12">
+        <main className="min-h-screen bg-background text-foreground flex items-center justify-center px-4 py-12">
             <div className="w-full max-w-md">
 
                 <div className="text-center mb-8">
@@ -70,11 +70,11 @@ export default function RegisterPage() {
                         MultiMart
                     </Link>
                     <h1 className="text-2xl font-bold mt-4">Create an account</h1>
-                    <p className="text-gray-400 mt-1">Join the marketplace today</p>
+                    <p className="text-foreground-secondary mt-1">Join the marketplace today</p>
                 </div>
 
                 {error && (
-                    <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded-lg text-sm">
+                    <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded-lg text-sm mb-4">
                         {error}
                     </div>
                 )}
@@ -82,28 +82,28 @@ export default function RegisterPage() {
                 <div className="flex flex-col gap-4">
 
                     <div>
-                        <label className="text-sm text-gray-400 mb-2 block">
+                        <label className="text-sm text-foreground-secondary mb-2 block">
                             I want to:
                         </label>
                         <div className="grid grid-cols-2 gap-3">
                             <button
                             type="button"
                             onClick={() => setRole("buyer")}
-                            className={`py-3 rounded-lg font-medium text-sm transition-colors ${ role === "buyer" ? "bg-green-400 text-gray-900" : "bg-gray-800 text-gray-300 hover:bg-gray-700"}`}
+                            className={`py-3 rounded-lg font-medium text-sm transition-colors ${ role === "buyer" ? "bg-green-400 text-gray-900" : "bg-background-tertiary text-foreground-secondary hover:opacity-80"}`}
                             >
                                 Shop / Buy
                             </button>
                             <button
                             type="button"
                             onClick={() => setRole("vendor")}
-                            className={`py-3 rounded-lg font-medium text-sm transition-colors ${role === "vendor" ? "bg-green-400 text-gray-900" : "bg-gray-800 text-gray-300 hove:bg-gray-700"}`}
+                            className={`py-3 rounded-lg font-medium text-sm transition-colors ${role === "vendor" ? "bg-green-400 text-gray-900" : "bg-background-tertiary text-foreground-secondary hover:opacity-80"}`}
                             >
                                 Sell / Vendor
                             </button>
                         </div>
                     </div>
                     <div>
-                        <label className="text-sm text-gray-400 mb-1 block">
+                        <label className="text-sm text-foreground-secondary mb-1 block">
                             Full Name
                         </label>
                         <input
@@ -111,12 +111,25 @@ export default function RegisterPage() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Your full Name"
-                        className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-green-400 placeholder-gray-500"
+                        className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
                         />
                     </div>
 
                     <div>
-                        <label className="text-sm text-gray-400 mb-1 block">
+                        <label className="text-sm text-foreground-secondary mb-1 block">
+                            Email Address
+                        </label>
+                        <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@example.com"
+                        className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="text-sm text-foreground-secondary mb-1 block">
                             Password
                         </label>
                         <input 
@@ -124,13 +137,13 @@ export default function RegisterPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="At least 6 characters"
-                        className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                        className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
                         />
                     </div>
 
                     {role === "vendor" && (
                         <div>
-                            <label className="text-sm text-gray-400 mb-1 block">
+                            <label className="text-sm text-foreground-secondary mb-1 block">
                                 Store Name
                             </label>
                             <input 
@@ -138,7 +151,7 @@ export default function RegisterPage() {
                             value={storeName}
                             onChange={(e) => setStoreName(e.target.value)}
                             placeholder="Your store name"
-                            className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                            className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
                             />
                         </div>
                     )}
@@ -152,8 +165,8 @@ export default function RegisterPage() {
                         {loading ? "Creating account..." : "Create Account"}
                     </button>
                 </div>
-                <p className="text-center text-gray-400 text-sm mt-6">
-                    Already have an account?{""}
+                <p className="text-center text-foreground-secondary text-sm mt-6">
+                    Already have an account?{" "}
                     <Link
                     href="/login"
                     className="text-green-400 hover:underline font-medium"

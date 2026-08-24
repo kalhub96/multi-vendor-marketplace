@@ -46,8 +46,8 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
 
   if (!loaded || !currentUser) {
     return (
-      <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
-        <p className="text-gray-400">Loading...</p>
+      <main className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <p className="text-foreground-secondary">Loading...</p>
       </main>
     )
   }
@@ -138,20 +138,20 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
 }
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-background text-foreground">
 
       {/* HEADER */}
-      <section className="bg-gray-900 py-10 px-8">
+      <section className="bg-background-secondary py-10 px-8">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div>
             <Link
               href="/vendor/dashboard"
-              className="text-gray-400 hover:text-green-400 text-sm transition-colors"
+              className="text-foreground-secondary hover:text-green-400 text-sm transition-colors"
             >
               ← Back to Dashboard
             </Link>
             <h1 className="text-3xl font-bold mt-2">Manage Products</h1>
-            <p className="text-gray-400 mt-1">
+            <p className="text-foreground-secondary mt-1">
               {products.length} products in your store
             </p>
           </div>
@@ -181,7 +181,7 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
 
         {/* ADD PRODUCT FORM */}
         {showForm && (
-          <div className="bg-gray-900 rounded-xl p-6 mb-8">
+          <div className="bg-background-secondary rounded-xl p-6 mb-8">
             <h2 className="text-xl font-bold mb-6">Add New Product</h2>
 
             {formError && (
@@ -194,7 +194,7 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
 
               {/* IMAGE UPLOAD */}
               <div className="md:col-span-2">
-                <label className="text-sm text-gray-400 mb-1 block">
+                <label className="text-sm text-foreground-secondary mb-1 block">
                   Product Image
                 </label>
 
@@ -215,12 +215,12 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-48 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-750 border-2 border-dashed border-gray-700 transition-colors">
+                  <label className="flex flex-col items-center justify-center w-full h-48 bg-background-tertiary rounded-lg cursor-pointer hover:opacity-80 border-2 border-dashed border-border transition-colors">
                     <span className="text-3xl mb-2">📷</span>
-                    <span className="text-gray-400 text-sm">
+                    <span className="text-foreground-secondary text-sm">
                       Click to upload product image
                     </span>
-                    <span className="text-gray-600 text-xs mt-1">
+                    <span className="text-foreground-secondary text-xs mt-1">
                       PNG, JPG up to 2MB
                     </span>
                     <input
@@ -236,7 +236,7 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
 
               {/* NAME */}
               <div>
-                <label className="text-sm text-gray-400 mb-1 block">
+                <label className="text-sm text-foreground-secondary mb-1 block">
                   Product Name
                 </label>
                 <input
@@ -244,13 +244,13 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Wireless Headphones"
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                  className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
                 />
               </div>
 
               {/* CATEGORY */}
               <div>
-                <label className="text-sm text-gray-400 mb-1 block">
+                <label className="text-sm text-foreground-secondary mb-1 block">
                   Category
                 </label>
                 <select
@@ -258,7 +258,7 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
                   onChange={(e) =>
                     setCategory(e.target.value as ProductCategory)
                   }
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
                 >
                   <option value="electronics">Electronics</option>
                   <option value="clothing">Clothing</option>
@@ -271,7 +271,7 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
 
               {/* PRICE */}
               <div>
-                <label className="text-sm text-gray-400 mb-1 block">
+                <label className="text-sm text-foreground-secondary mb-1 block">
                   Price (ETB)
                 </label>
                 <input
@@ -279,13 +279,13 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   placeholder="e.g. 1500"
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                  className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
                 />
               </div>
 
               {/* STOCK */}
               <div>
-                <label className="text-sm text-gray-400 mb-1 block">
+                <label className="text-sm text-foreground-secondary mb-1 block">
                   Stock Quantity
                 </label>
                 <input
@@ -293,13 +293,13 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
                   value={stock}
                   onChange={(e) => setStock(e.target.value)}
                   placeholder="e.g. 50"
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                  className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
                 />
               </div>
 
               {/* DESCRIPTION */}
               <div className="md:col-span-2">
-                <label className="text-sm text-gray-400 mb-1 block">
+                <label className="text-sm text-foreground-secondary mb-1 block">
                   Description
                 </label>
                 <textarea
@@ -307,7 +307,7 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe your product..."
                   rows={3}
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500 resize-none"
+                  className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500 resize-none"
                 />
               </div>
 
@@ -324,16 +324,16 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
         )}
 
         {/* PRODUCTS- TABLE ON DESKTOP, CARDS ON MOBILE */}
-        <div className="bg-gray-900 rounded-xl overflow-hidden">
+        <div className="bg-background-secondary rounded-xl overflow-hidden">
 
           {products.length === 0 ?(
-            <div className="text-center py-16 text-gray-500">
+            <div className="text-center py-16 text-foreground-secondary">
               No products yet — add your first one!
             </div>
           ):(
             <>
             {/* DESKTOP TABLE HEADER — hidden on mobile */}
-            <div className="hidden sm:grid grid-cols-5 gap-4 px-6 py-4 bg-gray-800 text-gray-400 text-sm font-medium">
+            <div className="hidden sm:grid grid-cols-5 gap-4 px-6 py-4 bg-background-tertiary text-foreground-secondary text-sm font-medium">
               <span className="col-span-2">Product</span>
               <span>Category</span>
               <span>Price</span>
@@ -342,9 +342,9 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
             {products.map((product) => (
               <div key={product.id}>
                 {/* DESKTOP ROW — hidden on mobile */}
-                <div className="hidden sm:grid grid-cols-5 gap-4 px-6 py-4 border-t border-gray-800 items-center hover:bg-gray-800/50 transition-colors">
+                <div className="hidden sm:grid grid-cols-5 gap-4 px-6 py-4 border-t border-border items-center hover:bg-background-tertiary/50 transition-colors">
                   <div className="col-span-2 flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg overfolw-hidden bg-gray-800 shrink-0">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-background-tertiary shrink-0">
                       {product.image && product.image.startsWith("data:") ? (
                          // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -353,14 +353,14 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
                         className="w-full h-full object-cover"
                       />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                        <div className="w-full h-full flex items-center justify-center text-foreground-secondary text-xs">
                           Img
                         </div>
                       )}
                     </div>
                     <div>
                       <p className="font-medium">{product.name}</p>
-                      <p className="text-gray-400 text-sm line-clamp-1">
+                      <p className="text-foreground-secondary text-sm line-clamp-1">
                         {product.description}
                       </p>
                     </div>
@@ -369,10 +369,10 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
                     {product.category}
                   </span>
                   <span className="font-medium">
-                    ETB{(product.price * 160).toFixed(2)}
+                    ETB {(product.price * 160).toFixed(2)}
                   </span>
                   <div className="flex items-center justify-between">
-                    <span className={product.stock > 0 ? "text-white" : "text-red-400"}>
+                    <span className={product.stock > 0 ? "text-foreground" : "text-red-400"}>
                       {product.stock > 0 ? "In Stock" : "Out of Stock"}
                     </span>
                     <button
@@ -385,9 +385,9 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
                   </div>
                 </div>
                 {/* MOBILE CARD — hidden on desktop */}
-                <div className="sm:hidden border-t border-gray-800 p-4 flex flex-col gap-3">
+                <div className="sm:hidden border-t border-border p-4 flex flex-col gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-800 shrink-0">
+                    <div className="w-14 h-14 rounded-lg overflow-hidden bg-background-tertiary shrink-0">
                       {product.image && product.image.startsWith("data:") ? (
                          // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -396,7 +396,7 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
                         className="w-full h-full object-cover"
                         />
                       ): (
-                        <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                        <div className="w-full h-full flex items-center justify-center text-foreground-secondary text-xs">
                           Img
                         </div>
                       )}
@@ -410,11 +410,11 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
                   </div>
 
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">
-                      Price: <span className="text-white font-medium">ETB{(product.price * 160).toFixed(2)}</span>
+                    <span className="text-foreground-secondary">
+                      Price: <span className="text-foreground font-medium">ETB {(product.price * 160).toFixed(2)}</span>
                     </span>
-                    <span className="text-gray-400">
-                      Stock: <span className={product.stock > 0 ? "text-white font-medium" : "text-red-400 font-medium"}>
+                    <span className="text-foreground-secondary">
+                      Stock: <span className={product.stock > 0 ? "text-foreground font-medium" : "text-red-400 font-medium"}>
                         {product.stock > 0 ? "In Stock" : "Out of Stock"}
                       </span>
                     </span>

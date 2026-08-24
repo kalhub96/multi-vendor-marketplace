@@ -46,8 +46,8 @@ export default function ProfilePage() {
 
   if (!loaded || !currentUser) {
     return (
-      <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
-        <p className="text-gray-400">Loading profile...</p>
+      <main className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <p className="text-foreground-secondary">Loading profile...</p>
       </main>
     )
   }
@@ -111,10 +111,10 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-background text-foreground">
 
       {/* HEADER */}
-      <section className="bg-gray-900 py-10 px-8">
+      <section className="bg-background-secondary py-10 px-8">
         <div className="max-w-3xl mx-auto flex items-center gap-5">
           <div className="w-16 h-16 rounded-full bg-green-400 text-gray-900 flex items-center justify-center font-bold text-2xl shrink-0">
             {currentUser.name.charAt(0).toUpperCase()}
@@ -143,7 +143,7 @@ export default function ProfilePage() {
                 </span>
               )}
             </div>
-            <p className="text-gray-500 text-xs mt-2">
+            <p className="text-foreground-secondary text-xs mt-2">
               Member since {new Date(currentUser.createdAt).toLocaleDateString()}
             </p>
           </div>
@@ -170,17 +170,17 @@ export default function ProfilePage() {
 
         {/* ROLE-SPECIFIC INFO */}
         {currentUser.role === "buyer" && (
-          <div className="bg-gray-900 rounded-xl p-6">
+          <div className="bg-background-secondary rounded-xl p-6">
             <h2 className="text-lg font-bold mb-4">Your Activity</h2>
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-800 rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">Total Orders</p>
+              <div className="bg-background-tertiary rounded-lg p-4">
+                <p className="text-foreground-secondary text-sm mb-1">Total Orders</p>
                 <p className="text-2xl font-bold text-green-400">
                   {myOrders.length}
                 </p>
               </div>
-              <div className="bg-gray-800 rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">Total Spent</p>
+              <div className="bg-background-tertiary rounded-lg p-4">
+                <p className="text-foreground-secondary text-sm mb-1">Total Spent</p>
                 <p className="text-2xl font-bold text-green-400">
                   ETB {totalSpent.toFixed(0)}
                 </p>
@@ -190,12 +190,12 @@ export default function ProfilePage() {
         )}
 
         {currentUser.role === "vendor" && vendorStore && (
-          <div className="bg-gray-900 rounded-xl p-6">
+          <div className="bg-background-secondary rounded-xl p-6">
             <h2 className="text-lg font-bold mb-4">Your Store</h2>
-            <div className="bg-gray-800 rounded-lg p-4 flex items-center justify-between">
+            <div className="bg-background-tertiary rounded-lg p-4 flex items-center justify-between">
               <div>
                 <p className="font-medium">{vendorStore.storeName}</p>
-                <p className="text-gray-400 text-sm mt-1">
+                <p className="text-foreground-secondary text-sm mt-1">
                   {vendorStore.description}
                 </p>
               </div>
@@ -215,9 +215,9 @@ export default function ProfilePage() {
         )}
 
         {currentUser.role === "admin" && (
-          <div className="bg-gray-900 rounded-xl p-6">
+          <div className="bg-background-secondary rounded-xl p-6">
             <h2 className="text-lg font-bold mb-2">Admin Access</h2>
-            <p className="text-gray-400 text-sm">
+            <p className="text-foreground-secondary text-sm">
               You have full administrative permissions across the marketplace.
             </p>
             <Link
@@ -230,7 +230,7 @@ export default function ProfilePage() {
         )}
 
         {/* EDIT PROFILE FORM */}
-        <div className="bg-gray-900 rounded-xl p-6">
+        <div className="bg-background-secondary rounded-xl p-6">
           <h2 className="text-lg font-bold mb-4">Edit Profile</h2>
 
           {formError && (
@@ -246,25 +246,25 @@ export default function ProfilePage() {
 
           <div className="flex flex-col gap-4">
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">
+              <label className="text-sm text-foreground-secondary mb-1 block">
                 Full Name
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
               />
             </div>
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">
+              <label className="text-sm text-foreground-secondary mb-1 block">
                 Email Address
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
               />
             </div>
             <button
@@ -278,7 +278,7 @@ export default function ProfilePage() {
         </div>
 
         {/* CHANGE PASSWORD */}
-        <div className="bg-gray-900 rounded-xl p-6">
+        <div className="bg-background-secondary rounded-xl p-6">
           <h2 className="text-lg font-bold mb-4">Change Password</h2>
 
           {passwordError && (
@@ -294,7 +294,7 @@ export default function ProfilePage() {
 
           <div className="flex flex-col gap-4">
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">
+              <label className="text-sm text-foreground-secondary mb-1 block">
                 New Password
               </label>
               <input
@@ -302,11 +302,11 @@ export default function ProfilePage() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="At least 6 characters"
-                className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
               />
             </div>
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">
+              <label className="text-sm text-foreground-secondary mb-1 block">
                 Confirm New Password
               </label>
               <input
@@ -314,13 +314,13 @@ export default function ProfilePage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Re-enter password"
-                className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
+                className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-gray-500"
               />
             </div>
             <button
               type="button"
               onClick={handleSavePassword}
-              className="bg-gray-800 text-white font-semibold px-6 py-3 rounded-full hover:bg-gray-700 transition-colors self-start"
+              className="bg-background-tertiary text-foreground font-semibold px-6 py-3 rounded-full hover:opacity-80 transition-colors self-start"
             >
               Update Password
             </button>
@@ -328,9 +328,9 @@ export default function ProfilePage() {
         </div>
 
         {/* APPEARANCE */}
-        <div className="bg-gray-900 rounded-xl p-6">
+        <div className="bg-background-secondary rounded-xl p-6">
           <h2 className="text-lg font-bold mb-4">Appearance</h2>
-          <p className="text-gray-400 text-sm mb-4">
+          <p className="text-foreground-secondary text-sm mb-4">
             Choose your preferred theme.
           </p>
           <div className="grid grid-cols-3 gap-3">
@@ -338,7 +338,7 @@ export default function ProfilePage() {
             type="button"
             onClick={() => setTheme("light")}
             className={`flex flex-col items-center gap-2 py-4 rounded-lg border-2 transition-colors ${
-            theme === "light" ? "border-green-800 bg-gray-800" : "border-gray-800/50 hover:bg-gray-800"
+            theme === "light" ? "border-green-400 bg-background-tertiary" : "border-border bg-background-tertiary/50 hover:bg-background-tertiary"
         }`}
           >
             <span className="text-2xl">☀️</span>
@@ -349,7 +349,7 @@ export default function ProfilePage() {
             type="button"
             onClick={() => setTheme("dark")}
             className={`flex flex-col items-center gap-2 py-4 rounded-lg border-2 transition-colors ${
-            theme === "dark" ? "border-green-800 bg-gray-800" : "border-gray-800/50 hover:bg-gray-800"
+            theme === "dark" ? "border-green-400 bg-background-tertiary" : "border-border bg-background-tertiary/50 hover:bg-background-tertiary"
         }`}
           >
             <span className="text-2xl">🌙</span>
@@ -360,7 +360,7 @@ export default function ProfilePage() {
             type="button"
             onClick={() => setTheme("system")}
             className={`flex flex-col items-center gap-2 py-4 rounded-lg border-2 transition-colors ${
-            theme === "system" ? "border-green-800 bg-gray-800" : "border-gray-800/50 hover:bg-gray-800"
+            theme === "system" ? "border-green-400 bg-background-tertiary" : "border-border bg-background-tertiary/50 hover:bg-background-tertiary"
         }`}
           >
             <span className="text-2xl">💻</span>
@@ -371,9 +371,9 @@ export default function ProfilePage() {
         </div>
 
         {/* DANGER ZONE */}
-        <div className="bg-gray-900 rounded-xl p-6 border border-red-900/50">
+        <div className="bg-background-secondary rounded-xl p-6 border border-red-900/50">
           <h2 className="text-lg font-bold mb-2">Account</h2>
-          <p className="text-gray-400 text-sm mb-4">
+          <p className="text-foreground-secondary text-sm mb-4">
             Log out of your MultiMart account on this device.
           </p>
           <button

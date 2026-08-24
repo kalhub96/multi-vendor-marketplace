@@ -50,7 +50,7 @@ export default function Home() {
           </motion.div>
       </section>
       
-      <section className="py-16 px-8">
+      <section className="py-16 px-8 bg-background text-foreground">
         <motion.h2
         initial={{ opacity: 0, y: 10}}
         whileInView={{ opacity: 1, y: 0}}
@@ -67,22 +67,32 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0}}
             viewport={{once: true}}
             transition={{duration: 0.4, delay: index*0.05}}
-            className="text-2xl font-bold mb-8 text-center"
             >
               <Link
               href={`/products/${product.id}`}
-              className="block border rounded-lg p-4 hover:shadow-lg transition-shadow group">
+              className="block border border-border rounded-lg p-4 hover:shadow-lg transition-shadow group bg-background-secondary">
 
-                <div className="bg-gray-100 h-48 rounded-md mb-4 flex items-center justify-center overflow-hidden">
+                <div className="bg-background-tertiary h-48 rounded-md mb-4 flex items-center justify-center overflow-hidden">
                   {product.image && product.image.startsWith("data:") ? (
                     <img
                     src={product.image}
                     alt={product.name}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"/>
                   ) : (
-                    <span className="text-gray-400">N0 Image Yet</span>
+                    <span className="text-foreground-secondary">No Image Yet</span>
                   )}
                 </div>
+
+                <span className="text-xs text-green-600 uppercase tracking-wide">
+                  {product.category}
+                </span>
+                <h3 className="font-semibold mt-1 mb-1 text-foreground">{product.name}</h3>
+                <p className="text-sm text-foreground-secondary mb-2 line-clamp-2">
+                  {product.description}
+                </p>
+                <p className="text-green-600 font-bold">
+                  ETB {(product.price * 160).toFixed(2)}
+                </p>
               </Link>
             </motion.div>
           ))}

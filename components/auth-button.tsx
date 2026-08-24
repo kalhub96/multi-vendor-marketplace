@@ -86,7 +86,7 @@ export default function AuthButton() {
       <button
         type="button"
         onClick={handleLogout}
-        className="text-sm text-gray-400 hover:text-red-400 transition-colors"
+        className="text-sm text-foreground-secondary hover:text-red-400 transition-colors"
       >
         Logout
       </button>

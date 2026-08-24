@@ -35,8 +35,8 @@ export default function MyOrdersPage() {
 
   if (!loaded || !currentUser) {
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
-      <section className="bg-gray-900 py-10 px-8 text-center">
+    <main className="min-h-screen bg-background text-foreground">
+      <section className="bg-background-secondary py-10 px-8 text-center">
         <Skeleton className="h-8 w-48 mx-auto mb-2" />
         <Skeleton className="h-4 w-64 mx-auto" />
       </section>
@@ -67,12 +67,12 @@ export default function MyOrdersPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-background text-foreground">
 
       {/* HEADER */}
-      <section className="bg-gray-900 py-10 px-8 text-center">
+      <section className="bg-background-secondary py-10 px-8 text-center">
         <h1 className="text-3xl font-bold">My Orders</h1>
-        <p className="text-gray-400 mt-2">
+        <p className="text-foreground-secondary mt-2">
           {myOrders.length === 0
             ? "You haven't placed any orders yet"
             : `${myOrders.length} order(s) placed`}
@@ -89,7 +89,7 @@ export default function MyOrdersPage() {
           {myOrders.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-6xl mb-6">📦</p>
-            <p className="text-gray-400 mb-6">
+            <p className="text-foreground-secondary mb-6">
               Your order history will show up here
             </p>
             <Link
@@ -102,15 +102,15 @@ export default function MyOrdersPage() {
         ) : (
           <div className="flex flex-col gap-6">
             {myOrders.map((order) => (
-              <div key={order.id} className="bg-gray-900 rounded-xl p-6">
+              <div key={order.id} className="bg-background-secondary rounded-xl p-6">
 
                 {/* ORDER HEADER */}
-                <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-800">
+                <div className="flex items-center justify-between mb-4 pb-4 border-b border-border">
                   <div>
                     <p className="font-semibold">
                       Order #{order.id.replace("order_", "")}
                     </p>
-                    <p className="text-gray-500 text-sm mt-1">
+                    <p className="text-foreground-secondary text-sm mt-1">
                       Placed on {new Date(order.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -126,10 +126,10 @@ export default function MyOrdersPage() {
   {order.items.map((item) => (
     <div
       key={item.product.id}
-      className="flex items-center justify-between bg-gray-800 rounded-lg p-3 sm:p-4 gap-3"
+      className="flex items-center justify-between bg-background-tertiary rounded-lg p-3 sm:p-4 gap-3"
     >
       <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-        <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-700 shrink-0">
+        <div className="w-12 h-12 rounded-lg overflow-hidden bg-background-secondary shrink-0">
           {item.product.image && item.product.image.startsWith("data:") ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -138,14 +138,14 @@ export default function MyOrdersPage() {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+            <div className="w-full h-full flex items-center justify-center text-foreground-secondary text-xs">
               Img
             </div>
           )}
         </div>
         <div className="min-w-0">
           <p className="font-medium truncate">{item.product.name}</p>
-          <p className="text-gray-400 text-sm">
+          <p className="text-foreground-secondary text-sm">
             Qty: {item.quantity}
           </p>
         </div>
@@ -158,10 +158,10 @@ export default function MyOrdersPage() {
 </div>
 
                {/* ORDER FOOTER */}
-<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-gray-800">
-  <p className="text-gray-400">
+<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-border">
+  <p className="text-foreground-secondary">
     Total:{" "}
-    <span className="text-white font-bold">
+    <span className="text-foreground font-bold">
       ETB {order.totalAmount.toFixed(2)}
     </span>
   </p>
@@ -169,7 +169,7 @@ export default function MyOrdersPage() {
   {canCancel(order.status) && (
     confirmingCancel === order.id ? (
       <div className="flex flex-wrap items-center gap-3">
-        <span className="text-gray-400 text-sm">
+        <span className="text-foreground-secondary text-sm">
           Cancel this order?
         </span>
         <button
@@ -182,7 +182,7 @@ export default function MyOrdersPage() {
         <button
           type="button"
           onClick={() => setConfirmingCancel(null)}
-          className="text-gray-400 hover:text-white text-sm transition-colors"
+          className="text-foreground-secondary hover:text-foreground text-sm transition-colors"
         >
           Keep Order
         </button>

@@ -41,7 +41,7 @@ export default function StarRating({
                 )
             })}
             {showNumber && (
-                <span className="text-gray-400 ml-1">
+                <span className="text-foreground-secondary ml-1">
                     {stars > 0 ? stars.toFixed(1) : "No ratings"}
                     {count !== undefined && count > 0 && (
                         <span className="ml-1">({count} reviews)</span>

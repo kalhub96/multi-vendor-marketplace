@@ -90,24 +90,8 @@ export default function VendorDashboredPage() {
                 </p>
             </div>
         </section>
-        {vendorStore && vendorStore.verificationStatus !== "verified" && (
-          <section className="max-w-6xl mx-auto px-8 pt-6">
-            <div className="bg-yellow-900/50 border border-yellow-500 text-yellow-300 px-6 py-4 rounded-lg flex items-center justify-between flex-wrap gap-3">
-              <div>
-                <p className="font-semibold">Get your store verified</p>
-                <p className="text-sm mt-1">
-                  Verified stores build more trust with buyers.
-                </p>
-              </div>
-              <Link
-                href="/vendor/verify-id"
-                className="bg-yellow-400 text-gray-900 font-semibold px-5 py-2 rounded-full hover:bg-yellow-300 transition-colors text-sm whitespace-nowrap"
-              >
-                Verify Now
-              </Link>
-            </div>
-          </section>
-        )}
+        
+
 
         <section className="max-w-6xl mx-auto px-8 py-10">
 

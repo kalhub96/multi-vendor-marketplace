@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MultiMart
+
+A full-stack, multi-vendor e-commerce marketplace built with Next.js, TypeScript, and Tailwind CSS. Buyers can browse and purchase from multiple independent vendors, vendors manage their own stores, and admins moderate the entire platform.
+
+## Features
+
+### Marketplace
+- Product browsing with search and category filtering
+- Product detail pages with image galleries, ratings, and reviews
+- Rule-based "You Might Also Like" recommendations
+- Shopping cart with per-user isolation
+- Full checkout flow with simulated payment methods (Telebirr, Chapa, Cash on Delivery)
+- Order history with cancellation support
+
+### Accounts & Roles
+- Buyer, Vendor, and Admin roles with role-based access
+- Registration and login with instant session updates
+- Editable user profiles
+- Light / Dark / System theme toggle
+
+### Vendor Tools
+- Vendor dashboard with live stats (products, orders, revenue, rating)
+- Product management with image upload
+- Order management with status progression (pending → processing → shipped → delivered)
+
+### Admin Tools
+- Platform-wide dashboard with live statistics
+- User moderation (ban, suspend, reactivate)
+- Vendor and product oversight
+
+### Design
+- Fully responsive (mobile, tablet, desktop)
+- Animated UI with Framer Motion (page transitions, hover effects, count-up stats)
+- Toast notifications for key actions
+- Loading skeletons for a smoother experience
+
+## Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Animation:** Framer Motion
+- **Notifications:** react-hot-toast
+- **State Management:** React Context API (Auth, Cart, Products, Orders, Ratings, Users, Vendors, Theme)
+- **Data Persistence:** localStorage (no backend database in v1.0 — see Roadmap)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+ and npm
+
+### Installation
 
 ```bash
+git clone https://github.com/yourusername/multimart.git
+cd multimart
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Test Accounts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Role | Email | Password |
+|------|-------|----------|
+| Buyer | john@example.com | any password |
+| Vendor | sarah@example.com | any password |
+| Admin | admin@example.com | any password |
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure

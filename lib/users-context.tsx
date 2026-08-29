@@ -1,99 +1,117 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect } from "react"
-import { User } from "@/types"
-import { users as initialUsers } from "@/data/users"
+import { supabase } from "@/lib/supabase-client"
+import { User, VerificationStatus } from "@/types"
 
 type UsersContextType = {
-    users: User[]
-    banUser: (userId: string) => void
-    unbanUser: (userId: string) => void
-    suspendUser: (userId: string) => void
-    activateUser: (userId: string) => void
-    getUserById: (userId: string) => User | undefined
-    loaded: boolean
+  users: User[]
+  banUser: (userId: string) => Promise<void>
+  unbanUser: (userId: string) => Promise<void>
+  suspendUser: (userId: string) => Promise<void>
+  activateUser: (userId: string) => Promise<void>
+  getUserById: (userId: string) => User | undefined
+  refetchUsers: () => Promise<void>
+  loaded: boolean
 }
 
 const UsersContext = createContext<UsersContextType | null>(null)
+
+// CONVERT A DATABASE ROW (snake_case) INTO OUR APP'S User TYPE (camelCase)
+function mapRowToUser(row: {
+  id: string
+  name: string
+  email: string
+  role: string
+  status: string
+  created_at: string
+}): User {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    role: row.role as User["role"],
+    status: row.status as User["status"],
+    createdAt: row.created_at,
+  }
+}
 
 export function UsersProvider({ children }: { children: React.ReactNode }) {
   const [users, setUsers] = useState<User[]>([])
   const [loaded, setLoaded] = useState(false)
 
-useEffect(() => {
-    try {
-        const stored = localStorage.getItem("allUsers")
-        if (stored) {
-            setUsers(JSON.parse(stored))
-        } else {
-            setUsers(initialUsers)
-            localStorage.setItem("allUsers",JSON.stringify(initialUsers))
-        }
-    } catch {
-        setUsers(initialUsers)
+  // FETCH ALL USERS FROM SUPABASE
+  const fetchUsers = async () => {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .order("created_at", { ascending: true })
+
+    if (error) {
+      console.error("Failed to fetch users:", error.message)
+      setUsers([])
+    } else {
+      setUsers(data.map(mapRowToUser))
     }
     setLoaded(true)
-}, [])
+  }
 
-useEffect(() => {
-    if (loaded){
-        localStorage.setItem("allUsers", JSON.stringify(users))
+  // LOAD ON MOUNT
+  useEffect(() => {
+    fetchUsers()
+  }, [])
+
+  // UPDATE A USER'S STATUS IN THE DATABASE, THEN UPDATE LOCAL STATE
+  const updateStatus = async (userId: string, status: string) => {
+    const { error } = await supabase
+      .from("users")
+      .update({ status })
+      .eq("id", userId)
+
+    if (error) {
+      console.error("Failed to update user status:", error.message)
+      return
     }
-}, [users, loaded])
 
-//  BAN A USER
-const banUser = (userId: string) => {
-    setUsers((prev) => 
-        prev.map((u) => (u.id === userId ? {...u, status: "banned" }: u))
-    )
-}
-
-// UNBAN A USER
-const unbanUser = (userId: string) => {
+    // UPDATE LOCAL STATE SO THE UI REFLECTS THE CHANGE INSTANTLY
     setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, status: "active"} : u))
+      prev.map((u) =>
+        u.id === userId ? { ...u, status: status as User["status"] } : u
+      )
     )
-}
+  }
 
-const suspendUser = (userId: string) => {
-    setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? {...u, status: "suspended"} : u))
-    )
-}
+  const banUser = (userId: string) => updateStatus(userId, "banned")
+  const unbanUser = (userId: string) => updateStatus(userId, "active")
+  const suspendUser = (userId: string) => updateStatus(userId, "suspended")
+  const activateUser = (userId: string) => updateStatus(userId, "active")
 
-// ACTIVATE — REMOVE SUSPENSION
-const activateUser = (userId: string) => {
-    setUsers((prev) => 
-    prev.map((u) => (u.id === userId ? {...u, status: "active"} : u))
-  )
-}
-
-// GET A SINGLE USER BY ID — used to check latest status anywhere in the app
-const getUserById = (userId: string) => {
+  const getUserById = (userId: string) => {
     return users.find((u) => u.id === userId)
-}
+  }
 
-return(
+  return (
     <UsersContext.Provider
-    value={{
+      value={{
         users,
         banUser,
         unbanUser,
         suspendUser,
         activateUser,
         getUserById,
+        refetchUsers: fetchUsers,
         loaded,
-    }}>
-        {children}
+      }}
+    >
+      {children}
     </UsersContext.Provider>
-)
+  )
 }
 
-export function useUsers(){
-    const context = useContext(UsersContext)
-    if (!context) {
-        throw new Error ("useUsers must be used within a UsersProvider")
-    }
-    return context
+export function useUsers() {
+  const context = useContext(UsersContext)
+  if (!context) {
+    throw new Error("useUsers must be used within a UsersProvider")
+  }
+  return context
 }
-

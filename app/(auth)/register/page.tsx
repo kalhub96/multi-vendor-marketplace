@@ -5,9 +5,12 @@ import Link from "next/link"
 import { UserRole } from "@/types"
 import { useAuth } from "@/lib/auth-context"
 import toast from "react-hot-toast"
+import { useUsers } from "@/lib/users-context"
+import { supabase } from "@/lib/supabase-client"
 
 export default function RegisterPage() {
     const { login } = useAuth()
+    const { refetchUsers } = useUsers()
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -16,48 +19,95 @@ export default function RegisterPage() {
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
 
-    const handleRegister = () => {
-        setError("")
+    const handleRegister = async () => {
+    setError("")
 
-        if (!name || !email || !password){
-            setError("Please fill in all fields")
-            return
-        }
-
-        if(!email.includes("@")){
-            setError("Please enter a valid email")
-            return
-        }
-
-        if (role === "vendor" && !storeName){
-            setError("Please enter your store name")
-            return
-        }
-        setLoading(true)
-
-        setTimeout(() => {
-            const newUser = {
-                id: `user_${Date.now()}`,
-                name,
-                email,
-                role,
-                status: "active" as const,
-                createdAt: new Date().toISOString(),
-            }
-
-            login(newUser)
-            toast.success(`Welcome to MultiMart, ${newUser.name}!`)
-
-            if (role === "vendor"){
-                window.location.href = "/vendor/dashboard"
-            }else {
-                window.location.href = "/"
-            }
-
-            setLoading(false)
-        },1000)
+    if (!name || !email || !password){
+        setError("Please fill in all fields")
+        return
     }
 
+    if(!email.includes("@")){
+        setError("Please enter a valid email")
+        return
+    }
+
+    if (role === "vendor" && !storeName){
+        setError("Please enter your store name")
+        return
+    }
+    setLoading(true)
+
+    // CHECK IF EMAIL ALREADY EXISTS
+    const { data: existing } = await supabase
+        .from("users")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle()
+
+    if (existing) {
+        setError("An account with this email already exists")
+        setLoading(false)
+        return
+    }
+
+    // INSERT THE NEW USER
+    const { data: userRow, error: userError } = await supabase
+        .from("users")
+        .insert({
+            name,
+            email,
+            role,
+            status: "active",
+        })
+        .select()
+        .single()
+
+    if (userError || !userRow) {
+        setError("Something went wrong creating your account")
+        setLoading(false)
+        return
+    }
+
+    // IF REGISTERING AS A VENDOR, ALSO CREATE THEIR STORE
+    if (role === "vendor") {
+        const { error: vendorError } = await supabase
+            .from("vendors")
+            .insert({
+                user_id: userRow.id,
+                store_name: storeName,
+                description: "",
+                verification_status: "unverified",
+            })
+
+        if (vendorError) {
+            setError("Account created, but store setup failed. Contact support.")
+            setLoading(false)
+            return
+        }
+    }
+
+    const newUser = {
+        id: userRow.id,
+        name: userRow.name,
+        email: userRow.email,
+        role: userRow.role as "buyer" | "vendor" | "admin",
+        status: userRow.status as "active" | "banned" | "suspended",
+        createdAt: userRow.created_at,
+    }
+
+    login(newUser)
+    await refetchUsers()
+    toast.success(`Welcome to MultiMart, ${newUser.name}!`)
+
+    if (role === "vendor"){
+        window.location.href = "/vendor/dashboard"
+    }else {
+        window.location.href = "/"
+    }
+
+    setLoading(false)
+}
     return(
         <main className="min-h-screen bg-background text-foreground flex items-center justify-center px-4 py-12">
             <div className="w-full max-w-md">

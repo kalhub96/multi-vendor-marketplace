@@ -10,7 +10,7 @@ import toast from "react-hot-toast"
 export default function LoginPage() {
     const router = useRouter()
     const { login } = useAuth()
-    const { users } = useUsers()
+    const { users, loaded: usersLoaded } = useUsers()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
@@ -19,6 +19,10 @@ export default function LoginPage() {
     const handleLogin = () => {
         setError("")
 
+        if (!usersLoaded) {
+                setError("Still loading accounts, please try again in a moment")
+                return
+        }
         if (!email || !password) {
                 setError("please fill in all fields")
                 return

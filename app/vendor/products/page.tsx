@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Product, ProductCategory } from "@/types"
+import { ProductCategory } from "@/types"
 import { useAuth } from "@/lib/auth-context"
 import { useProducts } from "@/lib/products-context"
 import { useUsers } from "@/lib/users-context"
+import { useVendors } from "@/lib/vendors-context"
 import toast from "react-hot-toast"
 
 export default function VendorProductsPage() {
@@ -14,10 +15,13 @@ export default function VendorProductsPage() {
   const { currentUser, loaded } = useAuth()
   const { products: allProducts, addProduct, deleteProduct } = useProducts()
   const { getUserById } = useUsers()
-// GET LIVE STATUS — in case admin suspended this account after login
+  const { getVendorByUserId } = useVendors()
+
+  // GET LIVE STATUS — in case admin suspended this account after login
   const liveUser = currentUser ? getUserById(currentUser.id) : undefined
   const isSuspended = liveUser?.status === "suspended"
   const [showForm, setShowForm] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   // FORM STATE
   const [name, setName] = useState("")
@@ -41,8 +45,13 @@ export default function VendorProductsPage() {
   }
 }, [currentUser, loaded, router])
 
-// FILTER TO ONLY THIS VENDOR'S PRODUCTS
-const products = allProducts.filter((p) => p.vendorId === "vendor_1")
+  // FIND THIS VENDOR'S STORE
+  const vendorStore = currentUser ? getVendorByUserId(currentUser.id) : undefined
+
+  // FILTER TO ONLY THIS VENDOR'S PRODUCTS — using their real vendor id
+  const products = vendorStore
+    ? allProducts.filter((p) => p.vendorId === vendorStore.id)
+    : []
 
   if (!loaded || !currentUser) {
     return (
@@ -85,8 +94,13 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
   }
 
   // ADD PRODUCT HANDLER
-  const handleAddProduct = () => {
+  const handleAddProduct = async () => {
     setFormError("")
+
+    if (!vendorStore) {
+      setFormError("Could not find your store — please try refreshing")
+      return
+    }
 
     // VALIDATION
     if (!name || !description || !price || !stock) {
@@ -104,21 +118,26 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
       return
     }
 
-    // CREATE NEW PRODUCT
-    const newProduct: Product = {
-      id: `product_${Date.now()}`,
-      vendorId: "vendor_1",
+    setSubmitting(true)
+
+    const result = await addProduct({
+      vendorId: vendorStore.id,
       name,
       description,
       price: Number(price) / 160,
-      image: imagePreview || "/products/placeholder.jpg",
+      image: imagePreview || "",
       category,
       stock: Number(stock),
-      createdAt: new Date().toISOString(),
+    })
+
+    setSubmitting(false)
+
+    if (!result) {
+      setFormError("Something went wrong adding your product. Please try again.")
+      return
     }
 
-    addProduct(newProduct)
-    toast.success(`${newProduct.name} added to your store!`)
+    toast.success(`${result.name} added to your store!`)
 
     // RESET FORM
     setName("")
@@ -132,10 +151,10 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
   }
 
   // DELETE PRODUCT HANDLER
-  const handleDelete = (productId: string) => {
-  deleteProduct(productId)
-  toast.success("Product removed")
-}
+  const handleDelete = async (productId: string) => {
+    await deleteProduct(productId)
+    toast.success("Product removed")
+  }
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -316,9 +335,10 @@ const products = allProducts.filter((p) => p.vendorId === "vendor_1")
             <button
               type="button"
               onClick={handleAddProduct}
-              className="mt-6 bg-green-400 text-gray-900 font-bold px-8 py-3 rounded-full hover:bg-green-300 transition-colors"
+              disabled={submitting}
+              className="mt-6 bg-green-400 text-gray-900 font-bold px-8 py-3 rounded-full hover:bg-green-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Add Product
+              {submitting ? "Adding..." : "Add Product"}
             </button>
           </div>
         )}

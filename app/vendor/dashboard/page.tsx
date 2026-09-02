@@ -20,7 +20,7 @@ export default function VendorDashboredPage() {
     const { products } = useProducts()
     const { getVendorByUserId } = useVendors()
     const { getVendorAverage, ratings } = useRatings()
-    const { orders } = useOrders()
+    const { getOrdersByVendor } = useOrders()
     
 
     useEffect(() => {
@@ -62,13 +62,18 @@ export default function VendorDashboredPage() {
     // find the vendor's store info
     const vendorStore = currentUser ? getVendorByUserId(currentUser.id) : undefined
 
-    // find the vendor's product
-    const vendorProducts = products.filter((p) => p.vendorId === "vendor_1")
+    // find the vendor's products — using their REAL vendor id, not hardcoded
+    const vendorProducts = vendorStore
+    ? products.filter((p) => p.vendorId === vendorStore.id)
+    : []
+
+    // find the vendor's real orders
+    const vendorOrders = vendorStore ? getOrdersByVendor(vendorStore.id) : []
 
     const totalRevenue = vendorProducts.reduce(
-        (sum, p) => sum + p.price * 160 * Math.max(0, 50 - p.stock),
-        0
-    )
+    (sum, p) => sum + p.price * 160 * Math.max(0, 50 - p.stock),
+    0
+)
 
     return (
     <main className="min-h-screen bg-background text-foreground">
@@ -135,7 +140,7 @@ export default function VendorDashboredPage() {
     >
         <p className="text-foreground-secondary text-sm mb-2">Total Orders</p>
         <p className="text-3xl font-bold text-green-400">
-          <AnimatedNumber value={orders.length} />
+          <AnimatedNumber value={vendorOrders.length} />
         </p>
     </motion.div>
     <motion.div
@@ -157,12 +162,12 @@ export default function VendorDashboredPage() {
     >
         <p className="text-foreground-secondary text-sm mb-2">Store Rating</p>
         <p className="text-3xl font-bold text-green-400">
-            {getVendorAverage("vendor_1") > 0
-              ? <><AnimatedNumber value={getVendorAverage("vendor_1")} decimals={1} /> ★</>
-              : "No ratings yet"}
+            {vendorStore && getVendorAverage(vendorStore.id) > 0
+            ? <><AnimatedNumber value={getVendorAverage(vendorStore.id)} decimals={1} /> ★</>
+            : "No ratings yet"}
         </p>
         <p className="text-foreground-secondary text-xs mt-1">
-            {ratings.filter((r) => r.vendorId === "vendor_1").length} reviews
+            {vendorStore ? ratings.filter((r) => r.vendorId === vendorStore.id).length : 0} reviews
         </p>
     </motion.div>
 </div>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import { useOrders } from "@/lib/orders-context"
+import { useVendors } from "@/lib/vendors-context"
 import { OrderStatus } from "@/types"
 import toast from "react-hot-toast"
 
@@ -36,6 +37,7 @@ export default function VendorOrdersPage() {
   const router = useRouter()
   const { currentUser, loaded } = useAuth()
   const { getOrdersByVendor, updateOrderStatus } = useOrders()
+  const { getVendorByUserId } = useVendors()
   const [activeFilter, setActiveFilter] = useState<OrderStatus | "all">("all")
 
   // AUTH CHECK
@@ -58,10 +60,14 @@ export default function VendorOrdersPage() {
     )
   }
 
-  // NOTE: mock data ties all products to "vendor_1" — same limitation as products page
-  const vendorOrders = getOrdersByVendor("vendor_1").sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  )
+  // FIND THIS VENDOR'S STORE
+  const vendorStore = getVendorByUserId(currentUser.id)
+
+  const vendorOrders = vendorStore
+    ? getOrdersByVendor(vendorStore.id).sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+    : []
 
   const filteredOrders =
     activeFilter === "all"
@@ -70,12 +76,14 @@ export default function VendorOrdersPage() {
 
   // ONLY SHOW ITEMS FROM THIS VENDOR WITHIN AN ORDER
   const getVendorItems = (order: (typeof vendorOrders)[number]) =>
-    order.items.filter((item) => item.product.vendorId === "vendor_1")
+    vendorStore
+      ? order.items.filter((item) => item.product.vendorId === vendorStore.id)
+      : []
 
-  const handleAdvanceStatus = (orderId: string, currentStatus: OrderStatus) => {
+  const handleAdvanceStatus = async (orderId: string, currentStatus: OrderStatus) => {
     const next = nextStatusMap[currentStatus]
     if (!next) return
-    updateOrderStatus(orderId, next.next)
+    await updateOrderStatus(orderId, next.next)
     toast.success(`Order marked as ${next.next}`)
   }
 

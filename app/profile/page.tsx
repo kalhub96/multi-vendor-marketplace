@@ -15,6 +15,8 @@ export default function ProfilePage() {
   const router = useRouter()
   const { currentUser, loaded, updateUser, logout } = useAuth()
   const { getUserById } = useUsers()
+  const { getVendorByUserId } = useVendors()
+  const { getOrdersByBuyer } = useOrders()
   const { getVendorAverage } = useRatings()
   const { theme, setTheme } = useTheme()
 
@@ -53,12 +55,12 @@ export default function ProfilePage() {
   }
 
   const liveUser = getUserById(currentUser.id)
-  const vendorStore = vendors.find((v) => v.userId === currentUser.id)
-  const myOrders = orders.filter((o) => o.buyerId === currentUser.id)
+  const vendorStore = getVendorByUserId(currentUser.id)
+  const myOrders = getOrdersByBuyer(currentUser.id)
   const totalSpent = myOrders.reduce((sum, o) => sum + o.totalAmount, 0)
 
   // SAVE PROFILE CHANGES
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     setFormError("")
     setSaved(false)
 
@@ -72,7 +74,7 @@ export default function ProfilePage() {
       return
     }
 
-    updateUser({ name: name.trim(), email: email.trim() })
+    await updateUser({ name: name.trim(), email: email.trim() })
     setSaved(true)
     toast.success("Profile updated!")
     setTimeout(() => setSaved(false), 2500)

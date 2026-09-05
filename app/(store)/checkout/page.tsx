@@ -74,9 +74,9 @@ export default function CheckoutPage() {
 
     setProcessing(true)
 
-    // SIMULATE PAYMENT PROCESSING
-    setTimeout(() => {
-      createOrder({
+    // SIMULATE PAYMENT PROCESSING DELAY, THEN CREATE THE REAL ORDER
+    setTimeout(async () => {
+      const result = await createOrder({
         buyerId: currentUser.id,
         items: cartItems,
         totalAmount: cartTotal,
@@ -89,6 +89,13 @@ export default function CheckoutPage() {
         },
         paymentMethod,
       })
+
+      setProcessing(false)
+
+      if (!result) {
+        setFormError("Something went wrong placing your order. Please try again.")
+        return
+      }
 
       clearCart()
       toast.success("Order placed successfully!")

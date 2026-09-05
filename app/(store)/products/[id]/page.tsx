@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { use } from "react"
-import { vendors } from "@/data/users"
+import { useVendors } from "@/lib/vendors-context"
 import { useProducts } from "@/lib/products-context"
 import { useOrders } from "@/lib/orders-context"
 import { useCart } from "@/lib/cart-context"
@@ -33,6 +33,7 @@ export default function ProductDetailPage({
 
   const { addToCart } = useCart()
   const { products, loaded: productsLoaded } = useProducts()
+  const { vendors } = useVendors()
   const { getUserById } = useUsers()
   const { orders } = useOrders()
 
@@ -156,10 +157,14 @@ export default function ProductDetailPage({
   }
 
   // SUBMIT RATING
-  const handleSubmitRating = () => {
+  const [submittingRating, setSubmittingRating] = useState(false)
+
+  const handleSubmitRating = async () => {
     if (!currentUser || selectedStars === 0) return
 
-    addRating({
+    setSubmittingRating(true)
+
+    await addRating({
       productId: product.id,
       vendorId: product.vendorId,
       buyerId: currentUser.id,
@@ -168,6 +173,7 @@ export default function ProductDetailPage({
       comment,
     })
 
+    setSubmittingRating(false)
     setRatingSubmitted(true)
     setComment("")
     setSelectedStars(0)
@@ -410,10 +416,10 @@ export default function ProductDetailPage({
                   <button
                     type="button"
                     onClick={handleSubmitRating}
-                    disabled={selectedStars === 0}
+                    disabled={selectedStars === 0 || submittingRating}
                     className="bg-green-400 text-gray-900 font-semibold px-6 py-3 rounded-full hover:bg-green-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Submit Review
+                    {submittingRating ? "Submitting..." : "Submit Review"}
                   </button>
                 </div>
               )}

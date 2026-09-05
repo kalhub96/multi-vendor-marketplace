@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { vendors } from "@/data/users"
+import { useVendors } from "@/lib/vendors-context"
 import { useProducts } from "@/lib/products-context"
 import { useUsers } from "@/lib/users-context"
 import { useOrders } from "@/lib/orders-context"
@@ -18,6 +18,7 @@ export default function AdminDashboardPage() {
  const { products: allProducts, deleteProduct } = useProducts()
  const { users, banUser, unbanUser, suspendUser, activateUser } = useUsers()
  const { orders } = useOrders()
+ const { vendors } = useVendors()
  const [activeTab, setActiveTab] = useState<"overview" | "vendors" | "products">("overview")
 
   // AUTH CHECK — ADMIN ONLY
@@ -56,8 +57,9 @@ export default function AdminDashboardPage() {
   )
 }
 
-  const handleDeleteProduct = (productId: string) => {
-  deleteProduct(productId)
+  const handleDeleteProduct = async (productId: string) => {
+  await deleteProduct(productId)
+  toast.success("Product removed")
 }
 
   return (
@@ -195,8 +197,8 @@ export default function AdminDashboardPage() {
                         {user.status === "banned" ? (
                           <button
                             type="button"
-                            onClick={() => {
-                              unbanUser(user.id)
+                            onClick={async () => {
+                              await unbanUser(user.id)
                               toast.success(`${user.name} unbanned`)
                             }}
                             className="text-xs font-medium text-green-400 hover:text-green-300 transition-colors"
@@ -206,8 +208,8 @@ export default function AdminDashboardPage() {
                         ) : (
                           <button
                             type="button"
-                            onClick={() => {
-                              banUser(user.id)
+                            onClick={async () => {
+                              await banUser(user.id)
                               toast.success(`${user.name} banned`)
                             }}
                             className="text-xs font-medium text-red-400 hover:text-red-300 transition-colors"
@@ -219,8 +221,8 @@ export default function AdminDashboardPage() {
                         {user.status === "suspended" ? (
                           <button
                             type="button"
-                            onClick={() => {
-                              activateUser(user.id)
+                            onClick={async () => {
+                              await activateUser(user.id)
                               toast.success(`${user.name} reactivated`)
                             }}
                             className="text-xs font-medium text-green-400 hover:text-green-300 transition-colors"
@@ -231,8 +233,8 @@ export default function AdminDashboardPage() {
                           user.status !== "banned" && (
                             <button
                               type="button"
-                              onClick={() => {
-                                suspendUser(user.id)
+                              onClick={async () => {
+                                await suspendUser(user.id)
                                 toast.success(`${user.name} suspended`)
                               }}
                               className="text-xs font-medium text-yellow-400 hover:text-yellow-300 transition-colors"

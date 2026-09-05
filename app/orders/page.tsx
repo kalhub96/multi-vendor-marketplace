@@ -60,8 +60,8 @@ export default function MyOrdersPage() {
     setConfirmingCancel(orderId)
   }
 
-  const handleConfirmCancel = (orderId: string) => {
-    cancelOrder(orderId)
+  const handleConfirmCancel = async (orderId: string) => {
+    await cancelOrder(orderId)
     setConfirmingCancel(null)
     toast.success("Order cancelled")
   }

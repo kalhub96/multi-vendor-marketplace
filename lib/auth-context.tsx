@@ -6,8 +6,9 @@ import { User } from "@/types"
 
 type AuthContextType = {
   currentUser: User | null
-  login: (user: User) => void
-  logout: () => void
+  register: (email: string, password: string, name: string, role: "buyer" | "vendor") => Promise<{ error: string | null }>
+  login: (email: string, password: string) => Promise<{ error: string | null; user: User | null }>
+  logout: () => Promise<void>
   updateUser: (updates: Partial<User>) => Promise<void>
   loaded: boolean
 }
@@ -32,61 +33,121 @@ function mapRowToUser(row: {
   }
 }
 
+// FETCH THE public.users PROFILE ROW FOR A GIVEN AUTH USER ID
+async function fetchProfile(userId: string): Promise<User | null> {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .single()
+
+  if (error || !data) return null
+  return mapRowToUser(data)
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [loaded, setLoaded] = useState(false)
 
-  // LOAD SAVED SESSION FROM LOCALSTORAGE, THEN REFRESH FROM DATABASE
+  // ON MOUNT — CHECK IF THERE'S ALREADY A LOGGED-IN SUPABASE SESSION
   useEffect(() => {
     const loadSession = async () => {
-      try {
-        const stored = localStorage.getItem("currentUser")
-        if (!stored) {
-          setLoaded(true)
-          return
-        }
+      const { data: { session } } = await supabase.auth.getSession()
 
-        const savedUser: User = JSON.parse(stored)
-
-        // RE-FETCH THIS USER FROM SUPABASE TO GET THEIR LATEST STATUS
-        // (in case they were banned/suspended since their last visit)
-        const { data, error } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", savedUser.id)
-          .single()
-
-        if (error || !data) {
-          // USER NO LONGER EXISTS — CLEAR THE STALE SESSION
-          localStorage.removeItem("currentUser")
-          setCurrentUser(null)
-        } else {
-          const freshUser = mapRowToUser(data)
-          setCurrentUser(freshUser)
-          localStorage.setItem("currentUser", JSON.stringify(freshUser))
-        }
-      } catch {
-        setCurrentUser(null)
+      if (session?.user) {
+        const profile = await fetchProfile(session.user.id)
+        setCurrentUser(profile)
       }
+
       setLoaded(true)
     }
 
     loadSession()
+
+    // LISTEN FOR AUTH CHANGES (login/logout from anywhere in the app)
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        if (session?.user) {
+          const profile = await fetchProfile(session.user.id)
+          setCurrentUser(profile)
+        } else {
+          setCurrentUser(null)
+        }
+      }
+    )
+
+    return () => {
+      authListener.subscription.unsubscribe()
+    }
   }, [])
 
-  // LOGIN — SAVE SESSION TO STATE AND LOCALSTORAGE
-  const login = (user: User) => {
-    localStorage.setItem("currentUser", JSON.stringify(user))
-    setCurrentUser(user)
+  // REGISTER — CREATES A REAL SUPABASE AUTH ACCOUNT
+  // The database trigger automatically creates the matching public.users row
+  const register = async (
+    email: string,
+    password: string,
+    name: string,
+    role: "buyer" | "vendor"
+  ): Promise<{ error: string | null }> => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name, role },
+      },
+    })
+
+    if (error) {
+      return { error: error.message }
+    }
+
+    if (!data.user) {
+      return { error: "Something went wrong creating your account" }
+    }
+
+    return { error: null }
   }
 
-  // LOGOUT — CLEAR SESSION FROM STATE AND LOCALSTORAGE
-  const logout = () => {
-    localStorage.removeItem("currentUser")
+  // LOGIN — REAL PASSWORD VERIFICATION VIA SUPABASE AUTH
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<{ error: string | null; user: User | null }> => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      return { error: "Invalid email or password", user: null }
+    }
+
+    if (!data.user) {
+      return { error: "Login failed", user: null }
+    }
+
+    const profile = await fetchProfile(data.user.id)
+
+    if (!profile) {
+      return { error: "Could not load your profile", user: null }
+    }
+
+    if (profile.status === "banned") {
+      await supabase.auth.signOut()
+      return { error: "This account has been banned. Contact support for help.", user: null }
+    }
+
+    setCurrentUser(profile)
+    return { error: null, user: profile }
+  }
+
+  // LOGOUT — CLEAR THE REAL SUPABASE SESSION
+  const logout = async () => {
+    await supabase.auth.signOut()
     setCurrentUser(null)
   }
 
-  // UPDATE USER — SAVE TO SUPABASE, THEN UPDATE SESSION
+  // UPDATE USER PROFILE (name/email) — NOT PASSWORD, that's handled separately
   const updateUser = async (updates: Partial<User>) => {
     if (!currentUser) return
 
@@ -111,13 +172,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    const updated = { ...currentUser, ...updates }
-    setCurrentUser(updated)
-    localStorage.setItem("currentUser", JSON.stringify(updated))
+    setCurrentUser({ ...currentUser, ...updates })
   }
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout, updateUser, loaded }}>
+    <AuthContext.Provider
+      value={{ currentUser, register, login, logout, updateUser, loaded }}
+    >
       {children}
     </AuthContext.Provider>
   )

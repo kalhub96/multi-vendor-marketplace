@@ -3,26 +3,20 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useUsers } from "@/lib/users-context"
 import { useAuth } from "@/lib/auth-context"
 import toast from "react-hot-toast"
 
 export default function LoginPage() {
     const router = useRouter()
     const { login } = useAuth()
-    const { users, loaded: usersLoaded } = useUsers()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         setError("")
 
-        if (!usersLoaded) {
-                setError("Still loading accounts, please try again in a moment")
-                return
-        }
         if (!email || !password) {
                 setError("please fill in all fields")
                 return
@@ -33,27 +27,20 @@ export default function LoginPage() {
         }
 
         setLoading(true)
-        setTimeout(() => {
-            const user = users.find((u) => u.email === email)
 
-            if (!user) {
-                setError("no account found with this email")
-                setLoading(false)
-                return
-            }
+        const result = await login(email, password)
 
-            if (user.status === "banned") {
-                setError("This account has been banned. Contact support for help.")
-                setLoading(false)
-                return
-            }
+        if (result.error || !result.user) {
+            setError(result.error || "Login failed")
+            setLoading(false)
+            return
+        }
 
-            login(user)
-            toast.success(`Welcome back, ${user.name}!`)
+        toast.success(`Welcome back, ${result.user.name}!`)
 
-        if (user.role === "admin"){
+        if (result.user.role === "admin"){
             router.push("/admin/dashboard")
-        }else if (user.role === "vendor"){
+        }else if (result.user.role === "vendor"){
             router.push("/vendor/dashboard")
         }
         else{
@@ -61,8 +48,7 @@ export default function LoginPage() {
         }
 
         setLoading(false)
-    },1000)
-}
+    }
 
 return (
     <main className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">

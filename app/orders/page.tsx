@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useOrders } from "@/lib/orders-context"
 import { OrderStatus } from "@/types"
 import toast from "react-hot-toast"
+import { Package } from "lucide-react"
 import { Skeleton } from "@/components/skeleton"
 
 const statusStyles: Record<OrderStatus, string> = {
@@ -88,7 +89,9 @@ export default function MyOrdersPage() {
 
           {myOrders.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-6xl mb-6">📦</p>
+            <p className="text-6xl mb-6">
+              <Package className= "w-5 h-5"/>
+            </p>
             <p className="text-foreground-secondary mb-6">
               Your order history will show up here
             </p>

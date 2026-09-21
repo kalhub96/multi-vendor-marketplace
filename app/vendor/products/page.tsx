@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useProducts } from "@/lib/products-context"
 import { useUsers } from "@/lib/users-context"
 import { useVendors } from "@/lib/vendors-context"
+import { Camera, X } from "lucide-react"
 import toast from "react-hot-toast"
 
 export default function VendorProductsPage() {
@@ -230,12 +231,14 @@ export default function VendorProductsPage() {
                       onClick={handleRemoveImage}
                       className="absolute top-2 right-2 bg-gray-900/80 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors"
                     >
-                      ✕
+                      <X className= "w-4 h-4"/>
                     </button>
                   </div>
                 ) : (
                   <label className="flex flex-col items-center justify-center w-full h-48 bg-background-tertiary rounded-lg cursor-pointer hover:opacity-80 border-2 border-dashed border-border transition-colors">
-                    <span className="text-3xl mb-2">📷</span>
+                    <span className="text-3xl mb-2">
+                      <Camera className= "w-5 h-5"/>
+                    </span>
                     <span className="text-foreground-secondary text-sm">
                       Click to upload product image
                     </span>

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { Search } from "lucide-react"
 
 export default function SearchBar() {
     const router = useRouter()
@@ -37,7 +38,7 @@ export default function SearchBar() {
             type="button"
             onClick={handleSearch}
             className="absolute right-1 top-1/2 -translate-y-1/2 text-foreground-secondary hover:text-green-400 transition-colors px-2">
-                🔍
+                <Search className="w-4 h-4" />
             </button>
         </div>
     )

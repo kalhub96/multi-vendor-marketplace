@@ -14,6 +14,7 @@ import { User } from "@/types"
 import StarRating from "@/components/star-rating"
 import { Skeleton } from "@/components/skeleton"
 import { motion } from "framer-motion"
+import { Check } from "lucide-react"
 
 export default function ProductDetailPage({
   params,
@@ -357,7 +358,9 @@ export default function ProductDetailPage({
               hasPurchased &&
               (alreadyRated || ratingSubmitted) && (
                 <div className="text-green-400 flex items-center gap-2">
-                  <span>✓</span>
+                  <span>
+                    <Check className="w-4 h-4"/>
+                  </span>
                   <span>Thank you for your review!</span>
                 </div>
               )}

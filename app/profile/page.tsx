@@ -9,6 +9,7 @@ import { useVendors } from "@/lib/vendors-context"
 import { useOrders } from "@/lib/orders-context"
 import { useRatings } from "@/lib/ratings-context"
 import { useTheme } from "@/lib/theme-context"
+import { Monitor, Moon, Sun } from "lucide-react"
 import toast from "react-hot-toast"
 
 export default function ProfilePage() {
@@ -343,7 +344,9 @@ export default function ProfilePage() {
             theme === "light" ? "border-green-400 bg-background-tertiary" : "border-border bg-background-tertiary/50 hover:bg-background-tertiary"
         }`}
           >
-            <span className="text-2xl">☀️</span>
+            <span className="text-2xl">
+              <Sun className="w-6 h-6"/>
+            </span>
             <span className="text-sm font-medium">Light</span>
           </button>
 
@@ -354,7 +357,9 @@ export default function ProfilePage() {
             theme === "dark" ? "border-green-400 bg-background-tertiary" : "border-border bg-background-tertiary/50 hover:bg-background-tertiary"
         }`}
           >
-            <span className="text-2xl">🌙</span>
+            <span className="text-2xl">
+              <Moon className = "w-6 h-6"/>
+            </span>
             <span className="text-sm font-medium">Dark</span>
           </button>
 
@@ -365,7 +370,9 @@ export default function ProfilePage() {
             theme === "system" ? "border-green-400 bg-background-tertiary" : "border-border bg-background-tertiary/50 hover:bg-background-tertiary"
         }`}
           >
-            <span className="text-2xl">💻</span>
+            <span className="text-2xl">
+              <Monitor className="w-6 h-6"/>
+            </span>
             <span className="text-sm font-medium">System</span>
           </button>
 

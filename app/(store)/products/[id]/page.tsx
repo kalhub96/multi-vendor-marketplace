@@ -15,6 +15,7 @@ import StarRating from "@/components/star-rating"
 import { Skeleton } from "@/components/skeleton"
 import { motion } from "framer-motion"
 import { Check } from "lucide-react"
+import { useAuth } from "@/lib/auth-context"
 
 export default function ProductDetailPage({
   params,
@@ -24,19 +25,20 @@ export default function ProductDetailPage({
   const { id } = use(params)
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
-  const [currentUser, setCurrentUser] = useState<User | null>(null)
 
   // RATING FORM STATE
   const [selectedStars, setSelectedStars] = useState(0)
   const [hoveredStars, setHoveredStars] = useState(0)
   const [comment, setComment] = useState("")
   const [ratingSubmitted, setRatingSubmitted] = useState(false)
+  const [submittingRating, setSubmittingRating] = useState(false)
 
   const { addToCart } = useCart()
   const { products, loaded: productsLoaded } = useProducts()
   const { vendors } = useVendors()
   const { getUserById } = useUsers()
   const { orders } = useOrders()
+  const { currentUser, loaded: authLoaded } = useAuth()
 
   const liveUser = currentUser ? getUserById(currentUser.id) : undefined
   const isSuspended = liveUser?.status === "suspended"
@@ -48,11 +50,7 @@ export default function ProductDetailPage({
     addRating,
   } = useRatings()
 
-  // GET CURRENT USER FROM LOCALSTORAGE
-  useEffect(() => {
-    const stored = localStorage.getItem("currentUser")
-    if (stored) setCurrentUser(JSON.parse(stored))
-  }, [])
+  
 
   // ML RECOMMENDATIONS — DISABLED FOR v1.0 (requires separately hosted Flask server)
   // To re-enable: restore the fetch to /recommendations/{userId} and the
@@ -156,9 +154,6 @@ export default function ProductDetailPage({
     toast.success(`${product.name} added to cart!`)
     setTimeout(() => setAdded(false), 2000)
   }
-
-  // SUBMIT RATING
-  const [submittingRating, setSubmittingRating] = useState(false)
 
   const handleSubmitRating = async () => {
     if (!currentUser || selectedStars === 0) return
@@ -320,6 +315,10 @@ export default function ProductDetailPage({
           <div className="bg-background-secondary rounded-xl p-6 mb-8">
 
             {!currentUser && (
+              <p className="text-foreground-secondary">Loading...</p>
+            )}
+
+            {authLoaded && !currentUser && (
               <p className="text-foreground-secondary">
                 <Link href="/login" className="text-green-400 hover:underline">
                   Log in

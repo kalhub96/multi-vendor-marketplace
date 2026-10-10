@@ -10,6 +10,7 @@ import { useOrders } from "@/lib/orders-context"
 import { useRatings } from "@/lib/ratings-context"
 import { useTheme } from "@/lib/theme-context"
 import { Monitor, Moon, Sun } from "lucide-react"
+import { supabase } from "@/lib/supabase-client"
 import toast from "react-hot-toast"
 
 export default function ProfilePage() {
@@ -28,6 +29,8 @@ export default function ProfilePage() {
 
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [savingPassword, setSavingPassword] = useState(false)
   const [passwordError, setPasswordError] = useState("")
   const [passwordSaved, setPasswordSaved] = useState(false)
 
@@ -81,32 +84,64 @@ export default function ProfilePage() {
     setTimeout(() => setSaved(false), 2500)
   }
 
-  // SAVE PASSWORD (MOCK — no real backend yet)
-  const handleSavePassword = () => {
-    setPasswordError("")
-    setPasswordSaved(false)
+  // SAVE PASSWORD (real — Supabase Auth)
+const handleSavePassword = async () => {
+  setPasswordError("")
+  setPasswordSaved(false)
 
-    if (!newPassword || !confirmPassword) {
-      setPasswordError("Please fill in both password fields")
-      return
-    }
-
-    if (newPassword.length < 6) {
-      setPasswordError("Password must be at least 6 characters")
-      return
-    }
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords do not match")
-      return
-    }
-
-    // NOTE: no real password storage yet — this is a mock UI flow
-    setPasswordSaved(true)
-    setNewPassword("")
-    setConfirmPassword("")
-    setTimeout(() => setPasswordSaved(false), 2500)
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    setPasswordError("Please fill in all password fields")
+    return
   }
+
+  if (newPassword.length < 6) {
+    setPasswordError("Password must be at least 6 characters")
+    return
+  }
+
+  if (newPassword !== confirmPassword) {
+    setPasswordError("Passwords do not match")
+    return
+  }
+
+  if (newPassword === currentPassword) {
+    setPasswordError("New password must be different from the current one")
+    return
+  }
+
+  setSavingPassword(true)
+
+  // 1. Verify the current password by re-authenticating
+  const { error: verifyError } = await supabase.auth.signInWithPassword({
+    email: currentUser.email,
+    password: currentPassword,
+  })
+
+  if (verifyError) {
+    setSavingPassword(false)
+    setPasswordError("Current password is incorrect")
+    return
+  }
+
+  // 2. Update the password (stored hashed in Supabase; session stays valid)
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: newPassword,
+  })
+
+  setSavingPassword(false)
+
+  if (updateError) {
+    setPasswordError(updateError.message)
+    return
+  }
+
+  setPasswordSaved(true)
+  toast.success("Password updated!")
+  setCurrentPassword("")
+  setNewPassword("")
+  setConfirmPassword("")
+  setTimeout(() => setPasswordSaved(false), 2500)
+}
 
   const handleLogout = () => {
     logout()
@@ -295,6 +330,20 @@ export default function ProfilePage() {
             </div>
           )}
 
+          <div>
+            <label className="text=sm text-foreground-secondary mb-1 block">
+              Current Password
+            </label>
+            <input
+              type="password"
+              value={currentPassword}
+              placeholder="Enter current password"
+              autoComplete="current-password"
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              className="w-full bg-background-tertiary text-foreground px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 placeholder:gray-500"
+            />
+          </div>
+
           <div className="flex flex-col gap-4">
             <div>
               <label className="text-sm text-foreground-secondary mb-1 block">
@@ -321,12 +370,13 @@ export default function ProfilePage() {
               />
             </div>
             <button
-              type="button"
-              onClick={handleSavePassword}
-              className="bg-background-tertiary text-foreground font-semibold px-6 py-3 rounded-full hover:opacity-80 transition-colors self-start"
+            type="button"
+            onClick={handleSavePassword}
+            disabled={savingPassword}
+            className="bg-background-tertiary text-foreground font-semibold px-6 py-3 rounded-full hover:opacity-80 transition-colors self-start disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Update Password
-            </button>
+            {savingPassword ? "Saving..." : "Update Password"}
+          </button>
           </div>
         </div>
 

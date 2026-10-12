@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase-client"
 import { Order, OrderStatus, CartItem, Product, ProductCategory } from "@/types"
+import toast from "react-hot-toast"
 
 type OrdersContextType = {
   orders: Order[]
@@ -105,6 +106,37 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     fetchOrders()
+
+    // Reload whenever someone logs in or out
+    const { data: listener} = supabase.auth.onAuthStateChange((event) => {
+      if (
+        event ===  "SIGNED_IN" ||
+        event === "SIGNED_OUT" ||
+        event === "TOKEN_REFRESHED"
+      ){
+        setTimeout(() => fetchOrders(), 0)
+      }
+    })
+
+    // Live updates, so a vendor sees a buyer's cancellation without refreshing
+    const channel = supabase
+      .channel("orders-changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "orders"},
+        () => fetchOrders()
+      )
+      .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "order_items"},
+      () => fetchOrders()
+      )
+      .subscribe()
+
+      return () => {
+        listener.subscription.unsubscribe()
+        supabase.removeChannel(channel)
+      }
   }, [])
 
   // CREATE A NEW ORDER — INSERT ORDER, THEN INSERT ITS ITEMS
@@ -167,16 +199,24 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
 
   // UPDATE ORDER STATUS (used by both cancel and vendor status progression)
   const updateOrderStatus = async (orderId: string, status: OrderStatus) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("orders")
       .update({ status })
       .eq("id", orderId)
+      .select("id")
 
     if (error) {
       console.error("Failed to update order status:", error.message)
+      toast.error("Couldn't update the order")
       return
     }
 
+    // RLS or the status trigger blocked it: no error, but zero rows changed
+    if (!data || data.length === 0){
+      toast.error("This order can't be changed right now.")
+      await fetchOrders() // resync the screen with the database
+      return
+    }
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, status } : o))
     )

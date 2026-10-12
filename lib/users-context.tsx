@@ -59,27 +59,47 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
   // LOAD ON MOUNT
   useEffect(() => {
     fetchUsers()
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event) => {
+      if(
+        event == "SIGNED_IN" || 
+        event == "SIGNED_OUT" ||
+        event == "TOKEN_REFRESHED"
+      ) {
+        // setTimeout avoids a known supabase-js deadlock when calling
+        // supabase from inside this callback
+        setTimeout(() => fetchUsers(), 0)
+      }
+    })
+
+    return () => listener.subscription.unsubscribe()
   }, [])
 
   // UPDATE A USER'S STATUS IN THE DATABASE, THEN UPDATE LOCAL STATE
   const updateStatus = async (userId: string, status: string) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("users")
       .update({ status })
       .eq("id", userId)
+      .select("id")
 
     if (error) {
       console.error("Failed to update user status:", error.message)
       return
     }
 
-    // UPDATE LOCAL STATE SO THE UI REFLECTS THE CHANGE INSTANTLY
+    // RLS blocks silently: no error, but zero rows changed
+    if (!data || data.length === 0) {
+      console.error("Status update was blocked (not an admin, or user not found)")
+      return
+    }
+
     setUsers((prev) =>
       prev.map((u) =>
         u.id === userId ? { ...u, status: status as User["status"] } : u
-      )
-    )
-  }
+  )
+)
+}
 
   const banUser = (userId: string) => updateStatus(userId, "banned")
   const unbanUser = (userId: string) => updateStatus(userId, "active")

@@ -54,17 +54,16 @@ export default function MyOrdersPage() {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )
 
-  const canCancel = (status: OrderStatus) =>
-    status === "pending" || status === "processing"
+  const canCancel = (status: OrderStatus) => status === "pending"
 
   const handleCancelClick = (orderId: string) => {
     setConfirmingCancel(orderId)
   }
 
   const handleConfirmCancel = async (orderId: string) => {
-    await cancelOrder(orderId)
+    const ok = await cancelOrder(orderId)
     setConfirmingCancel(null)
-    toast.success("Order cancelled")
+    if (ok) toast.success("Order cancelled")
   }
 
   return (
@@ -160,7 +159,7 @@ export default function MyOrdersPage() {
   ))}
 </div>
 
-               {/* ORDER FOOTER */}
+{/* ORDER FOOTER */}
 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-border">
   <p className="text-foreground-secondary">
     Total:{" "}
@@ -169,7 +168,7 @@ export default function MyOrdersPage() {
     </span>
   </p>
 
-  {canCancel(order.status) && (
+  {canCancel(order.status) ? (
     confirmingCancel === order.id ? (
       <div className="flex flex-wrap items-center gap-3">
         <span className="text-foreground-secondary text-sm">
@@ -194,18 +193,22 @@ export default function MyOrdersPage() {
       <button
         type="button"
         onClick={() => handleCancelClick(order.id)}
-        className="text-red-400 hover:text-red-300 text-sm font-medium transition-colors self-start sm:self-auto"
+        className="text-red-400 hover:text-red-300 text-sm font-medium transition-colors"
       >
         Cancel Order
       </button>
     )
-  )}
-</div> 
+  ) : order.status === "processing" ? (
+    <p className="text-foreground-secondary text-xs">
+      Can't be cancelled once the vendor starts processing
+    </p>
+  ) : null}
+  </div> 
+  </div>
+))}
 </div>
-            ))}
-          </div>
-        )}
-      </section>
-    </main>
-  )
+)}
+</section>
+</main>
+)
 }

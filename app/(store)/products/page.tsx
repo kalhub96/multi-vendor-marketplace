@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
+import { SearchX, X } from "lucide-react"
 import { ProductCategory } from "@/types"
 import { useProducts } from "@/lib/products-context"
 import { Skeleton } from "@/components/skeleton"
@@ -17,7 +18,7 @@ const categories: { label: string; value: ProductCategory | "all" }[] = [
   { label: "Other", value: "other" },
 ]
 
-export default function ProductsPage() {
+function ProductsContent() {
   const searchParams = useSearchParams()
   const searchQuery = searchParams.get("search") || ""
   const { products, loaded: productsLoaded } = useProducts()
@@ -84,9 +85,9 @@ export default function ProductsPage() {
           {searchQuery && (
             <Link
               href="/products"
-              className="text-green-400 text-sm hover:underline"
+              className="text-green-400 text-sm hover:underline inline-flex items-center gap-1"
             >
-              Clear search ✕
+              Clear search <X size={14} />
             </Link>
           )}
         </div>
@@ -112,8 +113,8 @@ export default function ProductsPage() {
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-5xl mb-4">🔍</p>
+          <div className="text-center py-20 flex flex-col items-center">
+            <SearchX size={48} className="text-foreground-secondary mb-4" />
             <p className="text-foreground-secondary mb-2">
               No products found{searchQuery && ` for "${searchQuery}"`}
             </p>
@@ -170,5 +171,13 @@ export default function ProductsPage() {
       </section>
 
     </main>
+  )
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={null}>
+      <ProductsContent />
+    </Suspense>
   )
 }

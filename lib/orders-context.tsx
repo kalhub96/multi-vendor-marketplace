@@ -8,8 +8,8 @@ import toast from "react-hot-toast"
 type OrdersContextType = {
   orders: Order[]
   createOrder: (order: Omit<Order, "id" | "createdAt">) => Promise<Order | null>
-  cancelOrder: (orderId: string) => Promise<void>
-  updateOrderStatus: (orderId: string, status: OrderStatus) => Promise<void>
+  updateOrderStatus: (orderId: string, status: OrderStatus) => Promise<boolean>
+  cancelOrder: (orderId: string) => Promise<boolean>
   getOrdersByBuyer: (buyerId: string) => Order[]
   getOrdersByVendor: (vendorId: string) => Order[]
   refetchOrders: () => Promise<void>
@@ -198,7 +198,10 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   }
 
   // UPDATE ORDER STATUS (used by both cancel and vendor status progression)
-  const updateOrderStatus = async (orderId: string, status: OrderStatus) => {
+  const updateOrderStatus = async (
+    orderId: string,
+    status: OrderStatus
+  ): Promise<boolean> => {
     const { data, error } = await supabase
       .from("orders")
       .update({ status })
@@ -208,22 +211,26 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     if (error) {
       console.error("Failed to update order status:", error.message)
       toast.error("Couldn't update the order")
-      return
+      return false
     }
 
     // RLS or the status trigger blocked it: no error, but zero rows changed
-    if (!data || data.length === 0){
+    if (!data || data.length === 0) {
       toast.error("This order can't be changed right now.")
       await fetchOrders() // resync the screen with the database
-      return
+      return false
     }
+
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, status } : o))
     )
+
+    return true
   }
 
-  const cancelOrder = (orderId: string) =>
-    updateOrderStatus(orderId, "cancelled")
+  const cancelOrder = async (orderId: string): Promise<boolean> => {
+    return updateOrderStatus(orderId, "cancelled")
+  }
 
   const getOrdersByBuyer = (buyerId: string) => {
     return orders.filter((o) => o.buyerId === buyerId)
